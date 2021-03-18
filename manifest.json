@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+  "name": "Custom New Tab",
+  "description": "Want a better new tab window? Here you go.",
+  "version": "1.2",
+  "author": "Florin Große",
+  "background": {
+    "scripts": ["js/background.js"],
+    "persitent": false
+  },
+  "browser_action": {
+    "default_icon": "resources/icons/icon.png",
+    "default_title": "New Tab",
+    "default_popup": "popup/popup.html"
+  },
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "permissions": ["storage", "contextMenus"],
+  "icons": {
+    "1080": "resources/icons/icon.png",
+    "16": "resources/icons/icon_16.png",
+    "32": "resources/icons/icon_32.png",
+    "64": "resources/icons/icon_64.png",
+    "128": "resources/icons/icon_128.png",
+    "256": "resources/icons/icon_256.png"
+  }
+}

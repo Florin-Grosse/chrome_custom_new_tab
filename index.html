@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <title>New Tab</title>
+    <link href="stylesheets/style.css" type="text/css" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="background"></div>
+    <div id="add_website_overlay">
+      <div>
+        <h1>Add website</h1>
+        <span>URL:</span>
+        <input id="add_website_url" />
+        <span>Icon:</span>
+        <input id="add_website_icon" />
+        <span>Small Icon:</span>
+        <input id="add_website_small_icon" />
+        <button id="overlay_button">Add</button>
+      </div>
+      <svg
+        version="1.1"
+        viewBox="0 0 400 400"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="var(--font-color)"
+        id="close_overlay_svg"
+        class="hover_highlight"
+      >
+        <path
+          d="m291.5 103.1c-8.941-6.787-21.54-7.221-30.85-1.063-2.482 1.64-4.289 3.399-32.87 31.98l-27.97 27.97-59.18-59.05-1.39-0.8726c-12.98-8.149-29.46-4.545-37.45 8.187-5.47 8.723-5.288 20.3 0.454 28.95 1.518 2.285 2.956 3.759 31.4 32.2l28.36 28.37-58.36 58.51-1.001 1.488c-11.41 16.95-1.597 39.23 18.47 41.93 7.328 0.9892 14.82-1.228 20.65-6.113 0.9023-0.7552 11.59-11.35 29.78-29.54l28.37-28.37 58.62 58.48 1.553 1.049c15.57 10.52 36.57 2.591 41.17-15.55 1.781-7.024 0.4688-14.7-3.628-21.22l-0.8641-1.375-59.05-59.17 28.55-28.55c28.8-28.8 29.76-29.78 31.34-32.15 7.755-11.64 5.054-27.61-6.098-36.08"
+          fill-rule="evenodd"
+        />
+      </svg>
+    </div>
+    <div id="context_menu">
+      <span id="edit_website">Edit website</span>
+      <span class="remove_website">Remove website</span>
+    </div>
+    <div id="content_wrapper">
+      <div class="left_side">
+        <form
+          action="https://www.duckduckgo.com/"
+          type="GET"
+          id="search_bar_form"
+        >
+          <input
+            id="search_bar"
+            spellcheck="false"
+            placeholder="Search"
+            type="text"
+            name="q"
+            class="hover_highlight"
+          />
+        </form>
+        <div id="website_icon_wrapper"></div>
+      </div>
+      <div id="time_wrapper">
+        <div id="clock"></div>
+        <div id="date"></div>
+      </div>
+      <div id="settings">
+        <svg id="svg-settings" viewBox="0 0 32 32">
+          <path
+            fill="var(--font-color)"
+            d="M4 8h5.18a3 3 0 0 0 5.64 0H28a1 1 0 0 0 0-2H14.82a3 3 0 0 0-5.64 0H4a1 1 0 0 0 0 2zm8-2a1 1 0 1 1-1 1 1 1 0 0 1 1-1zM28 15h-3.18a3 3 0 0 0-5.64 0H4a1 1 0 0 0 0 2h15.18a3 3 0 0 0 5.64 0H28a1 1 0 0 0 0-2zm-6 2a1 1 0 1 1 1-1 1 1 0 0 1-1 1zM28 24H14.82a3 3 0 0 0-5.64 0H4a1 1 0 0 0 0 2h5.18a3 3 0 0 0 5.64 0H28a1 1 0 0 0 0-2zm-16 2a1 1 0 1 1 1-1 1 1 0 0 1-1 1z"
+          />
+        </svg>
+        <div id="gradient_options"></div>
+      </div>
+    </div>
+    <script src="js/variables.js"></script>
+    <script src="js/code.js"></script>
+  </body>
+</html>

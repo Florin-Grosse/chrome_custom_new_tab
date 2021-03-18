@@ -1,0 +1,336 @@
+html
+    --font-color: #eee
+    --font-color-transparent: #eeeeee60
+    --background-color: #353535
+    --background-color-transparent: #35353560
+
+    &.lightFont
+        --font-color: #353535
+        --font-color-transparent: #35353560
+        --background-color: #eee
+        --background-color-transparent: #eeeeee60
+
+.gradient0
+    --background: linear-gradient(to right bottom, rgb(77, 84, 209), rgb(165, 28, 123) 50%, rgb(238, 74, 55) 100%)
+.gradient1
+    --background: linear-gradient(to left top, #3c3864, #3c3c6a, #3b4171, #394577, #374a7d, #364f83, #345389, #32588f, #315e97, #2f639f, #2d69a7, #296faf)
+.gradient2
+    --background: linear-gradient(to right top, #ff8c8c, #ff8484, #ff7c7c, #ff7474, #fe6c6c, #fe6565, #fe5e5e, #fe5757, #ff504f, #ff4847, #ff3f3f, #ff3636)
+.gradient3
+    --background: linear-gradient(to left top, #ff8d46, #fe9446, #fd9c46, #fca347, #fbaa49, #fbaf49, #fbb449, #fbb949, #fcbe46, #fec244, #fec741, #ffcc3e)
+.gradient4
+    --background: linear-gradient(85deg, #00A8D4, #00A5B6, 90%, #20C28D)
+.gradient5
+    --background: linear-gradient(45deg, #3F438B, #F87875 60%, #FFCE64)
+.gradient6
+    --background: linear-gradient(to left top, #7840f8, #7c50f6, #805ef4, #856bf1, #8b77ed, #927aee, #987cee, #9e7fef, #a879f4, #b372f7, #bf69fa, #cc5ffb)
+.gradient7
+    --background: linear-gradient(to left top, #070707, #0b0b0b, #0e0e0e, #111111, #131313, #161616, #181818, #1b1b1b, #1f1f1f, #232323, #282828, #2c2c2c)
+.gradient8
+    --background: linear-gradient(45deg, #02aab0, #00cdac)
+
+@font-face
+    font-family: Poppins
+    src: url("../resources/fonts/Poppins/Poppins-Regular.ttf")
+
+@font-face
+    font-family: Roboto-Mono
+    src: url("../resources/fonts/Roboto_Mono/RobotoMono-VariableFont_wght.ttf")
+
+body
+    margin: 0
+    *
+        box-sizing: border-box
+        color: var(--font-color)
+        font-family: Poppins
+
+/*--- body ---*/
+#background
+    height: 100%
+    width: 100%
+    background-image: var(--background)
+    position: fixed
+    background-position: center center
+    background-size: cover
+
+#content_wrapper
+    --padding: 5vmin
+    position: absolute
+    height: calc(100vh - 2 * var(--padding))
+    width: calc(100vw - 2 * var(--padding))
+    top: var(--padding)
+    left: var(--padding)
+
+.left_side
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    max-width: 50vw
+
+/*--- style classes ---*/
+.hover_highlight
+    transition: opacity .45s ease-in-out, box-shadow .45s ease-in-out, transform .45s ease-in-out
+    opacity: .7
+    box-shadow: transparent 1px 1px 6px 2px
+    &:focus, &:hover
+        opacity: 1
+        transform: scale(1.05)
+        box-shadow: rgba(0, 0, 0, 0.3) 1px 1px 6px 2px
+
+
+/*--- context menu ---*/
+#context_menu
+    position: absolute
+    display: none
+    opacity: 0
+    transition: opacity .45s ease-in-out
+    flex-direction: column
+    top: 5vh
+    left: 10vw
+    z-index: 100
+    span
+        background-color: var(--background-color)
+        transition: opacity .15s ease-in-out
+        opacity: .5
+        cursor: pointer
+        padding: 1vmin
+        &:first-of-type
+            border-top-left-radius: 1vmin
+            border-top-right-radius: 1vmin
+        &:last-of-type
+            border-bottom-left-radius: 1vmin
+            border-bottom-right-radius: 1vmin
+        &:hover
+            opacity: 1
+
+.context_menu #context_menu
+    opacity: 1
+    display: flex
+
+
+/*--- website icons ---*/
+#website_icon_wrapper
+    display: flex
+    flex-wrap: wrap
+
+.website_icon
+    position: relative
+    background-color: var(--background-color-transparent)
+    border-radius: 1vmin
+    display: flex
+    align-items: center
+
+    height: 6rem
+    width: 6rem
+    padding: .75rem
+    margin: 0 1rem 1rem 0
+    p
+        text-align: center
+        margin: 0
+        text-decoration: none !important
+        white-space: pre-wrap
+        width: 4.5rem
+        overflow: hidden
+        overflow-wrap: break-word
+        pointer-events: none
+    img
+        width: 4.5rem
+        height: 4.5rem
+        object-fit: contain
+        pointer-events: none
+    .website_icon_small
+        position: absolute
+        bottom: .5vmin
+        right: .5vmin
+        height: 2.5vmin
+        width: 2.5vmin
+        background-color: transparent
+        margin: 0
+        border-radius: 50%
+        pointer-events: none
+    &#add_website svg
+        pointer-events: none
+        width: 4.5rem
+        height: 4.5rem
+    &:not(.error) p
+        display: none
+    &.error img
+        display: none
+
+/*-- add website overlay ---*/
+#add_website_overlay
+    position: fixed
+    z-index: 10
+    top: 0
+    opacity: 0
+    display: none
+    justify-content: center
+    align-items: center
+    transition: opacity .45s ease-in-out
+    width: 100%
+    height: 100%
+    div
+        background-color: transparentize(#353535, .2)
+        border-radius: 5vmin
+        padding: 5vmin 10vmin
+        display: flex
+        flex-direction: column
+        align-items: center
+        min-height: 20vh
+        h1
+            margin: 0
+        span
+            width: 100%
+            text-align: left
+            margin-top: 2.5vmin
+        input
+            background-color: transparent
+            outline: none
+            border: .15vmin solid var(--font-color-transparent)
+            border-radius: 1vmin
+            padding: 1vmin
+            width: 100%
+            min-width: 15rem
+        button
+            background-color: var(--background-color)
+            border: 0
+            outline: none
+            border-radius: 1vmin
+            width: 100%
+            margin-top: 1vmin
+            padding: .5vmin
+            cursor: pointer
+            font-size: 1.5rem
+            &:hover
+                background-color: #242424
+    svg
+        position: absolute
+        top: 2.5vmin
+        right: 2.5vmin
+        height: 5vmin
+        width: 5vmin
+        cursor: pointer
+        background-color: var(--background-color-transparent)
+        border-radius: 50%
+        padding: 1vmin
+
+.overlay #add_website_overlay
+    opacity: 1
+    display: flex
+
+
+/*--- search bar --- */
+#search_bar
+    background-color: var(--background-color-transparent)
+    outline: none
+    border: 0
+    height: 3.5rem
+    width: 25rem
+    border-radius: 1vmin
+    padding-left: .5rem
+    margin: auto
+    font-size: 1.25rem
+    color: var(--font-color)
+    &::placeholder
+        color: var(--font-color-transparent)
+
+
+/*--- Clock and Date ---*/
+#time_wrapper
+    position: fixed
+    top: 5vmin
+    right: 5vmin
+    display: flex
+    flex-direction: column
+    align-items: flex-end
+
+#clock
+    font-size: 5rem
+    line-height: 5rem
+    height: 5rem
+    display: flex
+    justify-content: flex-end
+    p
+        margin: 0
+        text-align: center
+        &.clock_time
+            font-family: Roboto-mono
+
+#date
+    font-size: 2.5rem
+
+
+/*--- settings ---*/
+#settings
+    position: fixed
+    bottom: 2.5vmin
+    right: 2.5vmin
+    width: 3rem
+    height: 2.5rem
+    padding: 0 .25rem
+
+    svg
+        flex: 0 0 5vmin
+        width: 5vmin
+
+        flex: 0 0 2.5rem
+        width: 2.5rem
+
+        transition: transform .25s ease-in-out
+        &:hover
+            transform: scale(1.1)
+        path
+            pointer-events: none
+    
+    #gradient_options
+        display: flex
+        flex-direction: column-reverse
+        flex-wrap: wrap-reverse
+        position: absolute
+        bottom: 2.5rem
+        right: 0
+        height: 0
+        // overflow: hidden
+        // transition: height .5s ease-in-out, overflow-x 0s linear .5s
+    
+    &:not(.open) #gradient_options
+        overflow-x: hidden
+
+    &.open #gradient_options
+        animation: showGradients .5s linear forwards
+
+    .gradient_option
+        cursor: pointer
+        border: .15vmin solid var(--font-color)
+        border-radius: 50%
+        background: var(--background)
+        transition: transform .25s ease-in-out
+        
+        width: 2.5rem
+        height: 2.5rem
+        margin: .25rem
+
+        &:hover
+            transform: scale(1.1)
+
+        &.add_background
+            display: flex
+            justify-content: center
+            align-items: center
+            background: var(--background-color-transparent)
+            svg
+                height: 2rem
+                width: 2rem
+
+
+    
+@keyframes showGradients
+    0%
+        overflow-x: hidden
+        height: 0
+    99%
+        overflow-x: hidden  
+    100%
+        overflow-x: visible
+        height: calc(100vh - 10rem - 5vmin - 2.5rem)
+        

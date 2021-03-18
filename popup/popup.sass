@@ -1,0 +1,71 @@
+.gradient0
+  --background: linear-gradient(to right bottom, rgb(77, 84, 209), rgb(165, 28, 123) 50%, rgb(238, 74, 55) 100%)
+.gradient1
+  --background: linear-gradient(to left top, #3c3864, #3c3c6a, #3b4171, #394577, #374a7d, #364f83, #345389, #32588f, #315e97, #2f639f, #2d69a7, #296faf)
+.gradient2
+  --background: linear-gradient(to right top, #ff8c8c, #ff8484, #ff7c7c, #ff7474, #fe6c6c, #fe6565, #fe5e5e, #fe5757, #ff504f, #ff4847, #ff3f3f, #ff3636)
+.gradient3
+  --background: linear-gradient(to left top, #ff8d46, #fe9446, #fd9c46, #fca347, #fbaa49, #fbaf49, #fbb449, #fbb949, #fcbe46, #fec244, #fec741, #ffcc3e)
+.gradient4
+  --background: linear-gradient(85deg, #00A8D4, #00A5B6, 90%, #20C28D)
+.gradient5
+  --background: linear-gradient(45deg, #3F438B, #F87875 60%, #FFCE64)
+.gradient6
+  --background: linear-gradient(to left top, #7840f8, #7c50f6, #805ef4, #856bf1, #8b77ed, #927aee, #987cee, #9e7fef, #a879f4, #b372f7, #bf69fa, #cc5ffb)
+.gradient7
+  --background: linear-gradient(to left top, #070707, #0b0b0b, #0e0e0e, #111111, #131313, #161616, #181818, #1b1b1b, #1f1f1f, #232323, #282828, #2c2c2c)
+
+body
+  margin: 0
+  *
+    color: #eee
+
+#content_wrapper
+  width: 12rem
+  padding: 2rem
+  background: var(--background)
+  h1
+    margin-top: 0
+    margin-bottom: .5rem
+    font-size: 2rem
+    line-height: 2rem
+    height: 2rem
+
+
+/*--- checkbox input ---*/
+.checkbox_input
+  display: flex
+  align-items: center
+  cursor: pointer
+  margin-left: .5rem
+  *
+    pointer-events: none
+  span
+    font-size: 1.25rem
+  &.checked
+    .svg_checkbox_true
+      opacity: 1
+
+.svg_checkbox
+  height: 1.5rem
+  width: 1.5rem
+  fill: #eee
+  .svg_checkbox_true
+    opacity: 0
+    transition: opacity .15s ease-in-out
+
+/*--- multiple choice ---*/
+.multiple_choice
+  display: flex
+  flex-direction: column
+  >span
+    font-size: 1.65rem
+    margin-top: .75rem
+    margin-bottom: .25rem
+
+.options_container
+  margin: 0
+  display: flex
+  flex-direction: column
+
+
