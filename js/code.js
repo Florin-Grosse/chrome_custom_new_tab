@@ -113,8 +113,8 @@ chrome.storage.onChanged.addListener((changes) => {
       : (date.style.visibility = "none");
   if (changes.darkModeFont !== undefined)
     changes.darkModeFont.newValue
-      ? html.classList.remove("lightFont")
-      : html.classList.add("lightFont");
+      ? html.classList.remove("darkFont")
+      : html.classList.add("darkFont");
 });
 
 let websites = [];
@@ -389,9 +389,9 @@ function loadClock() {
       .padStart(2, "O")
       .split("")
       .join('</p><p class="clock_time">') +
-    "</p><p>:</p>" +
+    "</p>" +
     (show_seconds
-      ? '<p class="clock_time">' +
+      ? '<p>:</p><p class="clock_time">' +
         seconds
           .toString()
           .replace("0", "O")
@@ -415,7 +415,7 @@ async function loadPage() {
 
   //overlay submit on enter
   document.addEventListener("keypress", (e) =>
-    e.keyCode === 13 ? (edit_website ? editWebsite() : addWebsite()) : null
+    e.key === "Enter" ? (edit_website ? editWebsite() : addWebsite()) : null
   );
 
   //context menu to delete websites

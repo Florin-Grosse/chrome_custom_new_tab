@@ -26,4 +26,4 @@ const search_engines = [
   },
 ];
 
-const gradientAmount = 12;
+const gradientAmount = 36;
