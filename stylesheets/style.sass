@@ -230,7 +230,7 @@ body
     height: 2.5rem
     padding: 0 .25rem
 
-    svg
+    >svg
         flex: 0 0 5vmin
         width: 5vmin
 
@@ -243,22 +243,36 @@ body
         path
             pointer-events: none
     
-    #gradient_options
-        display: flex
-        flex-direction: column-reverse
-        flex-wrap: wrap-reverse
-        position: absolute
-        bottom: 2.5rem
-        right: 0
-        height: 0
-        // overflow: hidden
-        // transition: height .5s ease-in-out, overflow-x 0s linear .5s
-    
-    &:not(.open) #gradient_options
-        overflow-x: hidden
+    #gradient_options_wrapper
+        --size: 5vw
+        top: 0
+        left: 0
+        position: fixed
+        width: 100%
+        background-color: var(--background-color-transparent)
+        overflow: hidden
+        opacity: 0
+        height: 100%
+        z-index: -1
+        transition: opacity .5s ease-in-out
+        #gradient_options
+            display: flex
+            flex-wrap: wrap
+            align-items: flex-start
+            justify-content: space-between
 
-    &.open #gradient_options
-        animation: showGradients .5s linear forwards
+    &:not(.open) #gradient_options_wrapper
+        pointer-events: none
+
+    &.open
+        position: fixed
+        z-index: 10
+        #gradient_options_wrapper
+            opacity: 1
+
+    .gradient_option_filler
+        width: calc(var(--size) * 6 / 5)
+        height: 0
 
     .gradient_option
         cursor: pointer
@@ -267,31 +281,23 @@ body
         background: var(--background)
         transition: transform .25s ease-in-out
         
-        width: 2.5rem
-        height: 2.5rem
-        margin: .25rem
+        width: var(--size)
+        height: var(--size)
+        margin: calc(var(--size) / 10)
 
         &:hover
             transform: scale(1.1)
 
-        &.add_background
+        &.add_background, &.random
             display: flex
             justify-content: center
             align-items: center
             background: var(--background-color-transparent)
             svg
-                height: 2rem
-                width: 2rem
+                height: calc(var(--size) / 3 * 2)
+                width: calc(var(--size) / 3 * 2)
 
-
-    
-@keyframes showGradients
-    0%
-        overflow-x: hidden
-        height: 0
-    99%
-        overflow-x: hidden  
-    100%
-        overflow-x: visible
-        height: calc(100vh - 10rem - 5vmin - 2.5rem)
-        
+        &.random
+            svg
+                transform: rotate(348deg)
+          

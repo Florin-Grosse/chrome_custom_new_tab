@@ -1,0 +1,13 @@
+{
+  "name": "chrome-custom-new-tab",
+  "version": "1.2.0",
+  "main": "index.html",
+  "license": "ISC",
+  "scripts": {
+    "SASS compile": "sass --watch ./"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "sass": "^1.32.8"
+  }
+}
