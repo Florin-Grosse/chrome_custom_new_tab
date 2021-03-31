@@ -1,22 +1,6 @@
-// returns promise to get async storage data
-async function getStorageValue(values = null) {
-  return new Promise(function (resolve, reject) {
-    chrome.storage.sync.get(values, function (options) {
-      resolve(options);
-    });
-  });
-}
-
 //set default if no other is defined
 chrome.storage.sync.get(
-  [
-    "gradient",
-    "websites",
-    "searchEngine",
-    "showSeconds",
-    "showDate",
-    "darkModeFont",
-  ],
+  ["gradient", "websites", "searchEngine", "darkModeFont"],
   (data) => {
     if (data.gradient === undefined)
       chrome.storage.sync.set({ gradient: 1 }, () =>
@@ -48,18 +32,6 @@ chrome.storage.sync.get(
         },
         () => console.log("Reseted websites")
       );
-    if (data.searchEngine === undefined)
-      chrome.storage.sync.set({ searchEngine: "duck" }, () =>
-        console.log("Reseted search engine")
-      );
-    if (data.showSeconds === undefined)
-      chrome.storage.sync.set({ showSeconds: false }, () =>
-        console.log("Reseted showSeconds")
-      );
-    if (data.showDate === undefined)
-      chrome.storage.sync.set({ showDate: true }, () =>
-        console.log("Reseted showDate")
-      );
     if (data.darkModeFont === undefined)
       chrome.storage.sync.set({ darkModeFont: true }, () =>
         console.log("Reseted darkModeFont")
@@ -71,8 +43,6 @@ chrome.storage.sync.get(
 const html = document.firstElementChild;
 const content_wrapper = document.getElementById("content_wrapper");
 const context_menu = document.getElementById("context_menu");
-const search_bar = document.getElementById("search_bar_form");
-const date = document.getElementById("date");
 const overlay_elements = {
   button: document.getElementById("overlay_button"),
   header: document.querySelector("#add_website_overlay h1"),
@@ -99,18 +69,6 @@ chrome.storage.onChanged.addListener((changes) => {
     websites = changes.websites.newValue;
     loadWebsites();
   }
-  if (changes.showSeconds !== undefined) {
-    show_seconds = changes.showSeconds.newValue;
-    clearInterval(clockInterval);
-    clockInterval = setInterval(loadClock, show_seconds ? 200 : 5000);
-    loadClock();
-  }
-  if (changes.searchEngine !== undefined)
-    loadSearchEngine(changes.searchEngine.newValue);
-  if (changes.showDate !== undefined)
-    changes.showDate.newValue === true
-      ? (date.style.visibility = "")
-      : (date.style.visibility = "none");
   if (changes.darkModeFont !== undefined)
     changes.darkModeFont.newValue
       ? html.classList.remove("darkFont")
@@ -281,25 +239,6 @@ function editWebsite() {
   }
 }
 
-function loadSearchEngine(searchEngine) {
-  if (searchEngine) {
-    search_bar.style.display = null;
-    search_bar.setAttribute(
-      "action",
-      search_engines.find((engine) => engine.id === searchEngine).url
-    );
-  } else {
-    search_bar.style.display = "none";
-  }
-}
-
-function loadDate() {
-  document.getElementById("date").innerHTML =
-    ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"][new Date().getDay()] +
-    ", " +
-    new Date().toLocaleDateString("de");
-}
-
 const settings = document.getElementById("settings");
 const gradientIconsWrapper = document.getElementById(
   "gradient_options_wrapper"
@@ -374,40 +313,6 @@ function changeGradient(index, background = "") {
   }
 }
 
-const clock = document.getElementById("clock");
-let clockInterval;
-function loadClock() {
-  const hours = new Date().getHours();
-  const minutes = new Date().getMinutes();
-  const seconds = new Date().getSeconds();
-  clock.innerHTML =
-    '<p class="clock_time">' +
-    hours
-      .toString()
-      .replace("0", "O")
-      .padStart(2, "O")
-      .split("")
-      .join('</p><p class="clock_time">') +
-    '</p><p>:</p><p class="clock_time">' +
-    minutes
-      .toString()
-      .replace("0", "O")
-      .padStart(2, "O")
-      .split("")
-      .join('</p><p class="clock_time">') +
-    "</p>" +
-    (show_seconds
-      ? '<p>:</p><p class="clock_time">' +
-        seconds
-          .toString()
-          .replace("0", "O")
-          .padStart(2, "O")
-          .split("")
-          .join('</p><p class="clock_time">')
-      : "") +
-    "</p>";
-}
-
 async function loadPage() {
   /*----- add eventListener ------*/
   //close overlay on esc press
@@ -476,23 +381,11 @@ async function loadPage() {
     .getElementById("close_overlay_svg")
     .addEventListener("click", () => closeOverlay());
 
-  const data = await getStorageValue([
-    "websites",
-    "searchEngine",
-    "showDate",
-    "showSeconds",
-    "gradient",
-    "darkModeFont",
-  ]);
+  const data = await getStorageValue(["websites", "gradient", "darkModeFont"]);
 
   //load websites
   websites = data.websites;
   loadWebsites();
-  //load correct search engine
-  loadSearchEngine(data.searchEngine);
-
-  //load if date should be visible
-  date.style.display = data.showDate === true ? null : "none";
 
   //load gradient
   data.gradient === -1
@@ -508,11 +401,8 @@ async function loadPage() {
   if (!data.darkModeFont) html.classList.add("lightFont");
 
   reloadPage();
-  loadClock();
-  clockInterval = setInterval(loadClock, show_seconds ? 200 : 5000);
 }
 
 function reloadPage() {
-  loadDate();
   loadSettings();
 }

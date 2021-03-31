@@ -1,0 +1,22 @@
+{
+  "websites": [
+    {
+      "icon": "",
+      "url": "",
+      "small_icon": "?"
+    }
+  ],
+  "searchEngine": "duck | ecosia | google | qwant | null",
+  "showSeconds": true,
+  "showDate": true,
+  "darkModeFont": true,
+  "gradient": {
+    "currentId": 0,
+    "customBackgrounds": [
+      { "bg": "linear-gradient(45deg, red, blue)", "id": 1 },
+      { "bg": "src(\"imgurl\")", "id": 2 }
+    ],
+    "selected": ["id1", "id2"],
+    "random": true
+  }
+}
