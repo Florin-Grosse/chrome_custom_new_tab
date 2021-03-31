@@ -5,7 +5,7 @@
   "version": "1.2",
   "author": "Florin Große",
   "background": {
-    "scripts": ["js/background.js"],
+    "scripts": ["js/backgroundScript.js"],
     "persitent": false
   },
   "browser_action": {

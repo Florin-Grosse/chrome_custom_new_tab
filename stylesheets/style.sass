@@ -9,7 +9,6 @@ body
 #background
     height: 100%
     width: 100%
-    background-image: var(--background)
     position: fixed
     background-position: center center
     background-size: cover
@@ -121,7 +120,7 @@ body
 /*-- add website overlay ---*/
 #add_website_overlay
     position: fixed
-    z-index: 10
+    z-index: 100
     top: 0
     opacity: 0
     display: none
@@ -275,6 +274,7 @@ body
         height: 0
 
     .gradient_option
+        position: relative
         cursor: pointer
         border: .15vmin solid var(--font-color)
         border-radius: 50%
@@ -288,7 +288,34 @@ body
         &:hover
             transform: scale(1.1)
 
-        &.add_background, &.random
+        &:not(.selected)
+            .selectedSvg, .deleteSvg
+                display: none
+        .selectedSvg
+            position: absolute
+            top: 0
+            left: 0
+            height: 100%
+            width: 100%
+            fill: var(--font-color)
+
+        &.selected
+            .deleteSvg
+                transition: opacity .2s ease-in-out
+                fill: var(--font-color)
+                opacity: 0
+                z-index: 1
+                position: absolute
+                bottom: 0
+                right: 0
+                height: 40%
+                width: 40%
+
+            &:hover
+                .deleteSvg
+                    opacity: 1
+
+        &.add_background
             display: flex
             justify-content: center
             align-items: center
@@ -297,7 +324,4 @@ body
                 height: calc(var(--size) / 3 * 2)
                 width: calc(var(--size) / 3 * 2)
 
-        &.random
-            svg
-                transform: rotate(348deg)
           

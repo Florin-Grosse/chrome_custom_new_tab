@@ -37,6 +37,15 @@ async function getStorageValue(values = null) {
   });
 }
 
+async function setStorageValue(values) {
+  return new Promise(function (resolve, reject) {
+    chrome.storage.sync.set(values, function (options) {
+      resolve(options);
+    });
+  });
+}
+
+// global onChangeListener for chrome storage
 // type: ((data) => void)[]
 let changeListener = [];
 
