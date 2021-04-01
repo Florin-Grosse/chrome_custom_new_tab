@@ -287,9 +287,11 @@ body
 
         &:hover
             transform: scale(1.1)
+            .deleteSvg
+                opacity: 1
 
         &:not(.selected)
-            .selectedSvg, .deleteSvg
+            .selectedSvg
                 display: none
         .selectedSvg
             position: absolute
@@ -299,21 +301,17 @@ body
             width: 100%
             fill: var(--font-color)
 
-        &.selected
-            .deleteSvg
-                transition: opacity .2s ease-in-out
-                fill: var(--font-color)
-                opacity: 0
-                z-index: 1
-                position: absolute
-                bottom: 0
-                right: 0
-                height: 40%
-                width: 40%
-
-            &:hover
-                .deleteSvg
-                    opacity: 1
+        .deleteSvg
+            transition: opacity .2s ease-in-out
+            fill: var(--font-color)
+            opacity: 0
+            z-index: 1
+            position: absolute
+            bottom: 0
+            right: 0
+            height: 40%
+            width: 40%
+                
 
         &.add_background
             display: flex

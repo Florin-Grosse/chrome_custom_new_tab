@@ -1,5 +1,8 @@
 async function backgroundInit() {
-  let { customBackgrounds, selected } = {};
+  let { customBackgrounds, selected } = {
+    customBackgrounds: [],
+    selected: [0],
+  };
   try {
     ({ customBackgrounds, selected } = (
       await getStorageValue(["background"])
@@ -8,8 +11,6 @@ async function backgroundInit() {
     chrome.storage.sync.set({
       background: { customBackgrounds: [], selected: [0] },
     });
-    customBackgrounds = [];
-    selected = [0];
   }
 
   const current = selected[Math.round(Math.random() * (selected.length - 1))];
@@ -81,7 +82,8 @@ async function backgroundInit() {
     document
       .querySelectorAll(".gradient_option:not(.add_background)")
       .forEach((ele) => {
-        ele.addEventListener("click", () => {
+        ele.addEventListener("click", (e) => {
+          if (e.target.classList.contains("deleteSvg")) return;
           const bgId = Number(ele.getAttribute("bgId"));
           if (selected.includes(bgId))
             selected = selected.filter((ele) => ele !== bgId);
@@ -92,13 +94,19 @@ async function backgroundInit() {
         });
         const deleteSvg = ele.querySelector(".deleteSvg");
         if (deleteSvg)
-          deleteSvg.addEventListener("click", () => {
+          deleteSvg.addEventListener("click", (e) => {
+            e.preventDefault();
             const id = Number(ele.getAttribute("bgId"));
             selected = selected.filter((ele) => ele !== id);
-            html.classList.add(JSON.stringify(selected));
             customBackgrounds = customBackgrounds.filter((bg) => bg.id !== id);
-            console.log(selected, { selected, customBackgrounds });
-            setStorageValue({ selected, customBackgrounds });
+
+            console.log(selected, customBackgrounds);
+            chrome.storage.sync.set({
+              background: {
+                selected,
+                customBackgrounds,
+              },
+            });
           });
       });
 
