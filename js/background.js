@@ -159,17 +159,20 @@ async function backgroundInit() {
     }
   });
 
+  // fixes issues with eventListener not firing
+  window.focus();
   // set global var to current bg when tab is focused
   window.addEventListener("focus", () => {
     setStorageValue({
       background: { selected, customBackgrounds, currentTab: current },
     });
   });
-  // fixes issues with eventListener not firing
-  window.focus();
+  setStorageValue({
+    background: { selected, customBackgrounds, currentTab: current },
+  });
 
   loadBackground();
-  loadSettings();
+  // loadSettings();
 
   // global change listener
   changeListener.push((changes) => {
