@@ -8,8 +8,8 @@ async function backgroundInit() {
       await getStorageValue(["background"])
     ).background);
   } catch (err) {
-    chrome.storage.sync.set({
-      background: { customBackgrounds: [], selected: [0] },
+    setStorageValue({
+      background: { customBackgrounds: [], selected: [0], currentTab: 0 },
     });
   }
 
@@ -93,8 +93,8 @@ async function backgroundInit() {
           if (selected.includes(bgId))
             selected = selected.filter((ele) => ele !== bgId);
           else selected.push(bgId);
-          chrome.storage.sync.set({
-            background: { selected, customBackgrounds },
+          setStorageValue({
+            background: { selected, customBackgrounds, currentTab: current },
           });
         });
         const deleteSvg = ele.querySelector(".deleteSvg");
@@ -109,6 +109,7 @@ async function backgroundInit() {
               background: {
                 selected,
                 customBackgrounds,
+                currentTab: current,
               },
             });
           });
@@ -121,8 +122,8 @@ async function backgroundInit() {
           () => {
             if (url.value === "") return;
             customBackgrounds.push({ bg: url.value, id: getNewId() });
-            chrome.storage.sync.set({
-              background: { selected, customBackgrounds },
+            setStorageValue({
+              background: { selected, customBackgrounds, currentTab: current },
             });
             closeOverlay();
           },
@@ -161,6 +162,18 @@ async function backgroundInit() {
       closeSettings();
     }
   });
+
+  // set global var to current bg when tab is focused
+  window.addEventListener("focus", () => {
+    setStorageValue({
+      background: { selected, customBackgrounds, currentTab: current },
+    });
+  });
+  setStorageValue({
+    background: { selected, customBackgrounds, currentTab: current },
+  });
+  // fixes issues with eventListener not firing
+  window.focus();
 
   loadBackground();
   loadSettings();

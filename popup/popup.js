@@ -1,7 +1,7 @@
 //set default if no other is defined
 chrome.storage.sync.get(
   [
-    "gradient",
+    "background",
     "websites",
     "searchEngine",
     "showSeconds",
@@ -9,71 +9,36 @@ chrome.storage.sync.get(
     "darkModeFont",
   ],
   (data) => {
-    if (data.gradient === undefined)
-      chrome.storage.sync.set({ gradient: 1 }, () =>
-        console.log("Reseted gradient")
-      );
+    if (data.background === undefined)
+      chrome.storage.sync.set({
+        background: { selected: [0], customBackgrounds: [], currentTab: 0 },
+      });
     if (data.websites === undefined)
-      chrome.storage.sync.set(
-        {
-          websites: [
-            {
-              url: "https://www.youtube.de",
-              icon: "https://s.ytimg.com/yts/img/favicon_144-vfliLAfaB.png",
-            },
-            {
-              url: "https://www.docs.google.com/document/u/0/",
-              icon:
-                "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico",
-            },
-            {
-              icon:
-                "https://calendar.google.com/googlecalendar/images/favicon_v2018_256.png",
-              url: "https://calendar.google.com/calendar/b/0/r",
-            },
-            {
-              url: "https://www.amazon.de",
-              icon:
-                "https://icons.iconarchive.com/icons/bokehlicia/pacifica/256/amazon-icon.png",
-            },
-          ],
-        },
-        () => console.log("Reseted websites")
-      );
+      chrome.storage.sync.set({
+        websites: [],
+      });
     if (data.searchEngine === undefined)
-      chrome.storage.sync.set({ searchEngine: "duck" }, () =>
-        console.log("Reseted search engine")
-      );
+      chrome.storage.sync.set({ searchEngine: "duck" });
     if (data.showSeconds === undefined)
-      chrome.storage.sync.set({ showSeconds: false }, () =>
-        console.log("Reseted showSeconds")
-      );
+      chrome.storage.sync.set({ showSeconds: false });
     if (data.showDate === undefined)
-      chrome.storage.sync.set({ showDate: true }, () =>
-        console.log("Reseted showDate")
-      );
+      chrome.storage.sync.set({ showDate: true });
     if (data.darkModeFont === undefined)
-      chrome.storage.sync.set({ darkModeFont: true }, () =>
-        console.log("Reseted darkModeFont")
-      );
+      chrome.storage.sync.set({ darkModeFont: true });
     loadPage();
   }
 );
 const content_wrapper = document.getElementById("content_wrapper");
 
-function loadPage() {
+async function loadPage() {
   //laod show seconds checkbox action
   document.getElementById("show_seconds").addEventListener("click", (e) => {
     if (e.target.classList.contains("checked")) {
       e.target.classList.remove("checked");
-      chrome.storage.sync.set({ showSeconds: false }, () =>
-        console.log("Disabled seconds on clock")
-      );
+      chrome.storage.sync.set({ showSeconds: false });
     } else {
       e.target.classList.add("checked");
-      chrome.storage.sync.set({ showSeconds: true }, () =>
-        console.log("Enabled seconds on clock")
-      );
+      chrome.storage.sync.set({ showSeconds: true });
     }
   });
 
@@ -81,14 +46,10 @@ function loadPage() {
   document.getElementById("show_date").addEventListener("click", (e) => {
     if (e.target.classList.contains("checked")) {
       e.target.classList.remove("checked");
-      chrome.storage.sync.set({ showDate: false }, () =>
-        console.log("Disabled date")
-      );
+      chrome.storage.sync.set({ showDate: false });
     } else {
       e.target.classList.add("checked");
-      chrome.storage.sync.set({ showDate: true }, () =>
-        console.log("Enabled date")
-      );
+      chrome.storage.sync.set({ showDate: true });
     }
   });
 
@@ -132,28 +93,43 @@ function loadPage() {
   });
 
   // apply correct states
-  chrome.storage.sync.get(
-    ["gradient", "showSeconds", "showDate", "searchEngine", "darkModeFont"],
-    (data) => {
-      content_wrapper.classList.add("gradient" + data.gradient);
+  const {
+    background,
+    showSeconds,
+    showDate,
+    searchEngine,
+    darkModeFont,
+  } = await getStorageValue([
+    "background",
+    "showSeconds",
+    "showDate",
+    "searchEngine",
+    "darkModeFont",
+  ]);
 
-      //load checkbox for show_seconds in correct state
-      if (data.showSeconds)
-        document.getElementById("show_seconds").classList.add("checked");
+  console.log(background);
 
-      //load checkbox for show_seconds in correct state
-      if (data.showDate)
-        document.getElementById("show_date").classList.add("checked");
+  // set correct background
+  if (background.currentTab >= gradientAmount) {
+    content_wrapper.style.background = background.customBackgrounds.find(
+      (bg) => bg.id === background.currentTab
+    ).bg;
+  } else content_wrapper.classList.add("gradient" + background.currentTab);
 
-      //load checkbox for darkModeFont in correct state
-      if (data.darkModeFont) {
-        document.getElementById("dark_mode_font").classList.add("checked");
-      } else document.documentElement.classList.add("darkFont");
+  //load checkbox for show_seconds in correct state
+  if (showSeconds)
+    document.getElementById("show_seconds").classList.add("checked");
 
-      //load search engine in correct state
-      document
-        .querySelector("[engine=" + (data.searchEngine || "clear") + "]")
-        .classList.add("checked");
-    }
-  );
+  //load checkbox for show_seconds in correct state
+  if (showDate) document.getElementById("show_date").classList.add("checked");
+
+  //load checkbox for darkModeFont in correct state
+  if (darkModeFont) {
+    document.getElementById("dark_mode_font").classList.add("checked");
+  } else document.documentElement.classList.add("darkFont");
+
+  //load search engine in correct state
+  document
+    .querySelector("[engine=" + (searchEngine || "clear") + "]")
+    .classList.add("checked");
 }
