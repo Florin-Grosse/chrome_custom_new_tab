@@ -135,12 +135,8 @@ async function backgroundInit() {
       });
 
     document
-      .querySelector("#settings>svg")
-      .addEventListener("click", () =>
-        settings.classList.contains("open")
-          ? settings.classList.remove("open")
-          : settings.classList.add("open")
-      );
+      .querySelector("#settings")
+      .addEventListener("click", () => settings.classList.toggle("open"));
   }
 
   // get an id that is not yet used by another custom background
@@ -168,9 +164,6 @@ async function backgroundInit() {
     setStorageValue({
       background: { selected, customBackgrounds, currentTab: current },
     });
-  });
-  setStorageValue({
-    background: { selected, customBackgrounds, currentTab: current },
   });
   // fixes issues with eventListener not firing
   window.focus();
