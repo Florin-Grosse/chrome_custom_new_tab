@@ -24,6 +24,7 @@ async function backgroundInit() {
     });
 
     if (current >= gradientAmount) {
+      console.log(current, gradientAmount, customBackgrounds);
       background_element.style.background = customBackgrounds.find(
         (bg) => bg.id === current
       ).bg;
@@ -83,7 +84,11 @@ async function backgroundInit() {
       .querySelectorAll(".gradient_option:not(.add_background)")
       .forEach((ele) => {
         ele.addEventListener("click", (e) => {
-          if (e.target.classList.contains("deleteSvg")) return;
+          if (
+            e.target.classList.contains("deleteSvg") ||
+            e.target.parentElement.classList.contains("deleteSvg")
+          )
+            return;
           const bgId = Number(ele.getAttribute("bgId"));
           if (selected.includes(bgId))
             selected = selected.filter((ele) => ele !== bgId);
@@ -100,8 +105,7 @@ async function backgroundInit() {
             selected = selected.filter((ele) => ele !== id);
             customBackgrounds = customBackgrounds.filter((bg) => bg.id !== id);
 
-            console.log(selected, customBackgrounds);
-            chrome.storage.sync.set({
+            setStorageValue({
               background: {
                 selected,
                 customBackgrounds,
