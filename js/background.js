@@ -36,7 +36,6 @@ async function backgroundInit() {
       setCurrent();
     }
 
-    console.log(current);
     if (current >= gradientAmount) {
       // custom background selected
       background_element.style.background =
