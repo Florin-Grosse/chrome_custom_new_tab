@@ -1,3 +1,5 @@
+const cssBackgroundPrefix = "center center / cover ";
+
 async function backgroundInit() {
   let { customBackgrounds, selected } = {
     customBackgrounds: [],
@@ -34,14 +36,16 @@ async function backgroundInit() {
       setCurrent();
     }
 
+    console.log(current);
     if (current >= gradientAmount) {
       // custom background selected
-      background_element.style.background = customBackgrounds.find(
-        (bg) => bg.id === current
-      ).bg;
+      background_element.style.background =
+        cssBackgroundPrefix +
+        customBackgrounds.find((bg) => bg.id === current).bg;
     } else {
       // background is one of default ones
-      background_element.style.background = "var(--background)";
+      background_element.style.background =
+        cssBackgroundPrefix + "var(--background)";
       background_element.classList.add("gradient" + current);
     }
   }
