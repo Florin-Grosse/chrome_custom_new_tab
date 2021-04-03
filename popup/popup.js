@@ -107,8 +107,6 @@ async function loadPage() {
     "darkModeFont",
   ]);
 
-  console.log(background);
-
   // set correct background
   if (background.currentTab >= gradientAmount) {
     content_wrapper.style.background = background.customBackgrounds.find(

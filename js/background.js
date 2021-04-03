@@ -3,6 +3,7 @@ async function backgroundInit() {
     customBackgrounds: [],
     selected: [0],
   };
+  // get values from chrome storage or init values
   try {
     ({ customBackgrounds, selected } = (
       await getStorageValue(["background"])
@@ -13,22 +14,33 @@ async function backgroundInit() {
     });
   }
 
-  const current = selected[Math.round(Math.random() * (selected.length - 1))];
+  // randomly selected background from all selected
+  let current = 0;
+  setCurrent(); // init value
+
+  function setCurrent() {
+    current = selected[Math.round(Math.random() * (selected.length - 1))];
+  }
 
   const background_element = document.getElementById("background");
-  function loadBackground(oldValues = []) {
-    oldValues.forEach((oldVal) => {
-      if (oldVal >= gradientAmount) return;
+  // changes background
+  function loadBackground(oldValues) {
+    if (!oldValues) oldValues = selected;
 
-      background_element.classList.remove("gradient" + oldVal);
-    });
+    if (!selected.includes(current)) {
+      if (current < gradientAmount)
+        background_element.classList.remove("gradient" + current);
+
+      setCurrent();
+    }
 
     if (current >= gradientAmount) {
-      console.log(current, gradientAmount, customBackgrounds);
+      // custom background selected
       background_element.style.background = customBackgrounds.find(
         (bg) => bg.id === current
       ).bg;
     } else {
+      // background is one of default ones
       background_element.style.background = "var(--background)";
       background_element.classList.add("gradient" + current);
     }
@@ -36,7 +48,8 @@ async function backgroundInit() {
 
   const settings = document.getElementById("settings");
   const gradientIcons = document.getElementById("gradient_options");
-  function loadSettings() {
+  // load current gradientIcons and custom backgrounds
+  function updateGradientIcons() {
     const gradientIconsHTML = Array.from(
       { length: gradientAmount },
       (x, i) => i
@@ -90,13 +103,16 @@ async function backgroundInit() {
           )
             return;
           const bgId = Number(ele.getAttribute("bgId"));
-          if (selected.includes(bgId))
+          if (selected.includes(bgId)) {
             selected = selected.filter((ele) => ele !== bgId);
-          else selected.push(bgId);
+            if (selected.length === 0) selected = [0];
+          } else selected.push(bgId);
           setStorageValue({
             background: { selected, customBackgrounds, currentTab: current },
           });
         });
+
+        // add delete eventListener
         const deleteSvg = ele.querySelector(".deleteSvg");
         if (deleteSvg)
           deleteSvg.addEventListener("click", (e) => {
@@ -115,6 +131,7 @@ async function backgroundInit() {
           });
       });
 
+    // add eventListener to add button
     document
       .querySelector(".gradient_option.add_background")
       .addEventListener("click", () => {
@@ -133,10 +150,6 @@ async function backgroundInit() {
           false
         );
       });
-
-    document
-      .querySelector("#settings")
-      .addEventListener("click", () => settings.classList.toggle("open"));
   }
 
   // get an id that is not yet used by another custom background
@@ -152,6 +165,7 @@ async function backgroundInit() {
     settings.classList.remove("open");
   }
 
+  // close overlay when pressing escape
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       closeOverlay();
@@ -171,15 +185,21 @@ async function backgroundInit() {
     background: { selected, customBackgrounds, currentTab: current },
   });
 
+  // add settings eventListener
+  document.querySelector("#settings").addEventListener("click", (e) => {
+    if (e.target.id === "settings" || e.target.parentElement.id === "settings")
+      settings.classList.toggle("open");
+  });
+
   loadBackground();
-  // loadSettings();
+  updateGradientIcons();
 
   // global change listener
   changeListener.push((changes) => {
     if (changes.background !== undefined) {
       ({ customBackgrounds, selected } = changes.background.newValue);
       loadBackground(changes.background.oldValue.selected);
-      loadSettings();
+      updateGradientIcons();
     }
   });
 }

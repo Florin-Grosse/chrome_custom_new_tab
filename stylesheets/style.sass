@@ -25,7 +25,10 @@ body
     display: flex
     flex-direction: column
     align-items: flex-start
-    max-width: 50vw
+    @media (orientation: landscape)
+        max-width: 75%
+    @media (orientation: portrait)
+        margin-top: 10rem
 
 /*--- style classes ---*/
 .hover_highlight
@@ -199,10 +202,11 @@ body
 #time_wrapper
     position: fixed
     top: 5vmin
-    right: 5vmin
     display: flex
     flex-direction: column
     align-items: flex-end
+    @media (orientation: landscape)
+        right: 5vmin
 
 #clock
     font-size: 5rem

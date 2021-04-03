@@ -15,6 +15,10 @@
       { "bg": "linear-gradient(45deg, red, blue)", "id": 1 },
       { "bg": "src(\"imgurl\")", "id": 2 }
     ],
-    "selected": ["id1", "id2"]
+    "--customBackgrounds": "list of custom added backgrounds",
+    "selected": [0, 12],
+    "--selected": "ids of selected backgrounds",
+    "activeTab": 0,
+    "--activeTab": "id of background of last active tab (for popup background)"
   }
 }
