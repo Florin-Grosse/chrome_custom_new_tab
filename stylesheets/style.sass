@@ -79,7 +79,7 @@ body
 .website_icon
     position: relative
     background-color: var(--background-color-transparent)
-    border-radius: 1vmin
+    border-radius: var(--border-radius)
     display: flex
     align-items: center
 
@@ -101,6 +101,8 @@ body
         height: 4.5rem
         object-fit: contain
         pointer-events: none
+        &:not(.website_icon_small)
+            border-radius: var(--border-radius)
     .website_icon_small
         position: absolute
         bottom: .5vmin
@@ -134,7 +136,7 @@ body
     height: 100%
     div
         background-color: transparentize(#353535, .2)
-        border-radius: 5vmin
+        border-radius: var(--border-radius)
         padding: 5vmin 10vmin
         display: flex
         flex-direction: column
@@ -150,7 +152,7 @@ body
             background-color: transparent
             outline: none
             border: .15vmin solid var(--font-color-transparent)
-            border-radius: 1vmin
+            border-radius: var(--border-radius)
             padding: 1vmin
             width: 100%
             min-width: 15rem
@@ -158,7 +160,7 @@ body
             background-color: var(--background-color)
             border: 0
             outline: none
-            border-radius: 1vmin
+            border-radius: var(--border-radius)
             width: 100%
             margin-top: 1vmin
             padding: .5vmin
@@ -189,7 +191,7 @@ body
     border: 0
     height: 3.5rem
     width: 25rem
-    border-radius: 1vmin
+    border-radius: var(--border-radius)
     padding-left: .5rem
     margin: auto
     font-size: 1.25rem

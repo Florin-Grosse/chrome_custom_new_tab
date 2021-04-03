@@ -274,6 +274,9 @@ async function loadPage() {
         ? ""
         : websites[context_menu_current_index].small_icon;
   });
+  document.getElementById("open_website").addEventListener("click", () => {
+    window.open(websites[context_menu_current_index].url, "_blank");
+  });
 
   document
     .getElementById("close_overlay_svg")
