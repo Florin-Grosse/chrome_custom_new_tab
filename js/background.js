@@ -78,6 +78,7 @@ async function backgroundInit() {
           '<div class="gradient_option' +
           (selected.includes(bg.id) ? " selected" : "") +
           '" style="background: ' +
+          cssBackgroundPrefix +
           bg.bg +
           '" bgId="' +
           bg.id +
