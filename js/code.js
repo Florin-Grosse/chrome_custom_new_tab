@@ -37,6 +37,9 @@ const overlay_elements = {
   header: document.querySelector("#add_website_overlay h1"),
 };
 const url = document.getElementById("add_website_url");
+const url_span = document.querySelector(
+  "#add_website_overlay span:first-of-type"
+);
 const icon = document.getElementById("add_website_icon");
 const icon_span = document.querySelector(
   "#add_website_overlay span:nth-of-type(2)"
@@ -119,7 +122,8 @@ function openOverlay(
   buttonText,
   header,
   displayIconInput = true,
-  displaySmallIconInput = true
+  displaySmallIconInput = true,
+  displayURLInput = true
 ) {
   url.value = "";
   icon.value = "";
@@ -129,6 +133,8 @@ function openOverlay(
   overlay_elements.button.innerHTML = buttonText;
   overlay_elements.button.addEventListener("click", confirmFct);
   overlay_elements.header.innerHTML = header;
+  url.style.display = displayURLInput ? null : "none";
+  url_span.style.display = displayURLInput ? null : "none";
   icon.style.display = displayIconInput ? null : "none";
   icon_span.style.display = displayIconInput ? null : "none";
   small_icon.style.display = displaySmallIconInput ? null : "none";

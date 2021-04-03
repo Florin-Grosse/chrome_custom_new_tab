@@ -120,18 +120,30 @@ async function backgroundInit() {
         const deleteSvg = ele.querySelector(".deleteSvg");
         if (deleteSvg)
           deleteSvg.addEventListener("click", (e) => {
-            e.preventDefault();
-            const id = Number(ele.getAttribute("bgId"));
-            selected = selected.filter((ele) => ele !== id);
-            customBackgrounds = customBackgrounds.filter((bg) => bg.id !== id);
+            openOverlay(
+              () => {
+                e.preventDefault();
+                const id = Number(ele.getAttribute("bgId"));
+                selected = selected.filter((ele) => ele !== id);
+                customBackgrounds = customBackgrounds.filter(
+                  (bg) => bg.id !== id
+                );
 
-            setStorageValue({
-              background: {
-                selected,
-                customBackgrounds,
-                currentTab: current,
+                setStorageValue({
+                  background: {
+                    selected,
+                    customBackgrounds,
+                    currentTab: current,
+                  },
+                });
+                closeOverlay();
               },
-            });
+              "Delete",
+              "Please confirm that you want to delete this background",
+              false,
+              false,
+              false
+            );
           });
       });
 
