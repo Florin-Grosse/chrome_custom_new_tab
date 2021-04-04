@@ -53,6 +53,17 @@ async function loadPage() {
     }
   });
 
+  //laod show notepad checkbox action
+  document.getElementById("show_notepad").addEventListener("click", (e) => {
+    if (e.target.classList.contains("checked")) {
+      e.target.classList.remove("checked");
+      chrome.storage.sync.set({ notepad: null });
+    } else {
+      e.target.classList.add("checked");
+      chrome.storage.sync.set({ notepad: "" });
+    }
+  });
+
   //laod dark mode font color checkbox action
   document.getElementById("dark_mode_font").addEventListener("click", (e) => {
     chrome.storage.sync.set({
@@ -99,12 +110,14 @@ async function loadPage() {
     showDate,
     searchEngine,
     darkModeFont,
+    notepad,
   } = await getStorageValue([
     "background",
     "showSeconds",
     "showDate",
     "searchEngine",
     "darkModeFont",
+    "notepad",
   ]);
 
   // set correct background
@@ -120,6 +133,10 @@ async function loadPage() {
 
   //load checkbox for show_seconds in correct state
   if (showDate) document.getElementById("show_date").classList.add("checked");
+
+  //load checkbox for show_notepad in correct state
+  if (showDate)
+    document.getElementById("show_notepad").classList.add("checked");
 
   //load checkbox for darkModeFont in correct state
   if (darkModeFont) {
