@@ -202,9 +202,15 @@ async function backgroundInit() {
   });
 
   // add settings eventListener
-  document.querySelector("#settings").addEventListener("click", (e) => {
+  settings.addEventListener("click", (e) => {
     if (e.target.id === "settings" || e.target.parentElement.id === "settings")
       settings.classList.toggle("open");
+  });
+
+  // add transiton later to prevent element from showing when page loads (only on browser start)
+  requestAnimationFrame(() => {
+    document.getElementById("gradient_options_wrapper").style.transition =
+      "opacity .25s ease-in-out";
   });
 
   loadBackground();

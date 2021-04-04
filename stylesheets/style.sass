@@ -256,10 +256,10 @@ body
         width: 100%
         background-color: var(--background-color-transparent)
         overflow: hidden
-        opacity: 0
         height: 100%
         z-index: -1
-        transition: opacity .5s ease-in-out
+        // transition is added via js to prevent transition to show element when page loads
+        // transition: opacity .25s ease-in-out
         #gradient_options
             display: flex
             flex-wrap: wrap
@@ -267,6 +267,7 @@ body
             justify-content: space-between
 
     &:not(.open) #gradient_options_wrapper
+        opacity: 0
         pointer-events: none
 
     &.open
@@ -328,5 +329,3 @@ body
             svg
                 height: calc(var(--size) / 3 * 2)
                 width: calc(var(--size) / 3 * 2)
-
-          
