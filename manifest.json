@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Custom New Tab",
   "description": "Want a better new tab window? Here you go.",
-  "version": "1.2",
+  "version": "1.2.1",
   "author": "Florin Große",
   "background": {
     "scripts": ["js/backgroundScript.js"],
