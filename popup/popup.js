@@ -135,8 +135,7 @@ async function loadPage() {
   if (showDate) document.getElementById("show_date").classList.add("checked");
 
   //load checkbox for show_notepad in correct state
-  if (showDate)
-    document.getElementById("show_notepad").classList.add("checked");
+  if (notepad) document.getElementById("show_notepad").classList.add("checked");
 
   //load checkbox for darkModeFont in correct state
   if (darkModeFont) {

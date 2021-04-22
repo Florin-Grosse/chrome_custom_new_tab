@@ -18,16 +18,7 @@ async function notepadInit() {
   }
 
   function initNotepad() {
-    // listener doesnt fire
-    // notepadEle.addEventListener(
-    //   "change",
-    //   () => {
-    //     console.log(notepad);
-    //     notepad = notepadEle.value;
-    //     setStorageValue({ notepad });
-    //   },
-    //   false
-    // );
+    updateNotepad();
 
     //
     notepadEle.addEventListener("keydown", (e) => {
