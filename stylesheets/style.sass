@@ -94,6 +94,36 @@ body
     @media screen and ( orientation: portrait )
         width: 100%
         justify-content: center
+    
+    &.drag_n_drop
+        .website_icon
+            animation: wiggle .25s ease-in-out forwards infinite
+            transform-origin: center center
+            &:nth-of-type(3n)
+                animation-delay: 0s
+            &:nth-of-type(3n+1)
+                animation-delay: -.1s
+            &:nth-of-type(3n+2)
+                animation-delay: -.2s
+    &.holds_icon
+        .website_icon_margin:hover
+            transition: width .25s linear
+            width: 8rem
+            height: 6rem
+            div
+                width: 6rem
+                height: 100%
+                margin: 0 1rem
+
+@keyframes wiggle
+    0%
+        transform: rotate(0deg)
+    25%
+        transform: rotate(3deg)
+    75%
+        transform: rotate(-3deg)
+    100%
+        transform: rotate(0deg)
 
 .website_icon
     position: relative
@@ -105,7 +135,8 @@ body
     height: 6rem
     width: 6rem
     padding: .75rem
-    margin: 0 1rem 1rem 0
+    // margin: 0 1rem 1rem 0
+    margin-bottom: 1rem
     p
         text-align: center
         margin: 0
@@ -141,6 +172,13 @@ body
         display: none
     &.error img
         display: none
+
+.website_icon_margin
+    width: 1rem
+    div
+        background: var(--bg-transparent)
+        border-radius: var(--border-radius)
+        pointer-events: none
 
 .website_icon_filler
     width: 6rem

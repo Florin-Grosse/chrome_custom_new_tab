@@ -25,7 +25,7 @@ async function websitesInit() {
     websites = [];
   }
 
-  let draggingEle;
+  let canDrag = false;
 
   const websites_wrapper = document.getElementById("website_icon_wrapper");
   function loadWebsites() {
@@ -51,7 +51,7 @@ async function websitesInit() {
         "<p>" +
         shortURL +
         "</p>" +
-        "</a>";
+        '</a><div class="website_icon_margin"><div></div></div>';
     });
 
     websites_wrapper.innerHTML =
@@ -74,19 +74,22 @@ async function websitesInit() {
         );
       });
 
-    document.querySelectorAll(".website_icon").forEach((ele) => {
-      ele.addEventListener("mousedown", (e) => {
-        e.preventDefault();
-        initDrag(
-          ele,
-          e.clientX - ele.getBoundingClientRect().left,
-          e.clientY - ele.getBoundingClientRect().top,
-          e.pageX,
-          e.pageY
-        );
+    document
+      .querySelectorAll(".website_icon:not(#add_website)")
+      .forEach((ele) => {
+        ele.addEventListener("mousedown", (e) => {
+          if (!canDrag || e.button !== 0) return;
+          e.preventDefault();
+          initDrag(
+            ele,
+            e.clientX - ele.getBoundingClientRect().left,
+            e.clientY - ele.getBoundingClientRect().top,
+            e.pageX,
+            e.pageY
+          );
+        });
+        ele.addEventListener("dragstart", () => false);
       });
-      ele.addEventListener("dragstart", () => false);
-    });
 
     // add listener to add website button
     document
@@ -105,15 +108,16 @@ async function websitesInit() {
   }
 
   function initDrag(ele, xOffset, yOffset, xStart, yStart) {
+    websites_wrapper.classList.add("holds_icon");
     let currentHover;
+    const eleFiller = ele.nextElementSibling;
+    eleFiller.style.display = "none";
     const mouseMove = (e) => {
       ele.style.top = e.pageY - yOffset + "px";
       ele.style.left = e.pageX - xOffset + "px";
-      if (
-        e.target.classList.contains("website_icon") &&
-        e.target.id !== "add_website"
-      )
+      if (e.target.classList.contains("website_icon_margin"))
         currentHover = e.target;
+      else currentHover = null;
     };
     const mouseUp = (e) => {
       e.preventDefault();
@@ -125,7 +129,18 @@ async function websitesInit() {
       ele.style.left = null;
       ele.style.pointerEvents = null;
 
+      websites_wrapper.classList.remove("holds_icon");
+      eleFiller.style.display = null;
+
+      if (!currentHover) return;
+
+      const oldPosition = getSiblingNumber(ele) / 2;
+
       ele.parentElement.insertBefore(ele, currentHover);
+      ele.parentElement.insertBefore(eleFiller, ele);
+
+      const newPosition = getSiblingNumber(ele) / 2;
+      rotateWebsite(oldPosition, newPosition);
     };
     ele.style.position = "fixed";
     ele.style.pointerEvents = "none";
@@ -134,6 +149,22 @@ async function websitesInit() {
     ele.style.left = yStart - yOffset + "px";
     document.addEventListener("mousemove", mouseMove);
     document.addEventListener("mouseup", mouseUp);
+  }
+
+  function getSiblingNumber(ele) {
+    let index = -1;
+    for (; ele !== null; ele = ele.previousElementSibling) index++;
+    return index;
+  }
+
+  function toggleDrag() {
+    if (canDrag) {
+      canDrag = false;
+      websites_wrapper.classList.remove("drag_n_drop");
+    } else {
+      canDrag = true;
+      websites_wrapper.classList.add("drag_n_drop");
+    }
   }
 
   function addWebsite(url, icon, small_icon) {
@@ -172,6 +203,17 @@ async function websitesInit() {
         };
     setStorageValue({ websites });
     loadWebsites();
+  }
+
+  // moves website to a new index
+  function rotateWebsite(oldIndex, newIndex) {
+    const ele = websites[oldIndex];
+    websites.splice(oldIndex, 1);
+    websites = websites
+      .slice(0, newIndex)
+      .concat(ele)
+      .concat(websites.slice(newIndex));
+    setStorageValue({ websites });
   }
 
   function getURLRoot(url) {
@@ -242,6 +284,11 @@ async function websitesInit() {
       .forEach((ele) =>
         ele.addEventListener("click", () => removeWebsite(index))
       );
+
+    // change order
+    document.getElementById("toggle_drag").addEventListener("click", () => {
+      toggleDrag();
+    });
 
     // edit websites
     document
