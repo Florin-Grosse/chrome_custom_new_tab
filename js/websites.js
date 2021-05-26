@@ -2,7 +2,7 @@ async function websitesInit() {
   let { websites } = await getStorageValue(["websites"]);
 
   if (searchEngine === undefined) {
-    chrome.storage.sync.set({ websites: [] });
+    setStorageValue({ websites: [] });
     websites = [];
   }
 

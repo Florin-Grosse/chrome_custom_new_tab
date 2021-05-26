@@ -5,12 +5,12 @@ async function clockInit() {
   ]);
 
   if (showSeconds === undefined) {
-    chrome.storage.sync.set({ showSeconds: false });
+    setStorageValue({ showSeconds: false });
     showSeconds = false;
   }
 
   if (showDate === undefined) {
-    chrome.storage.sync.set({ showDate: false });
+    setStorageValue({ showSeconds: true });
     showDate = false;
   }
 

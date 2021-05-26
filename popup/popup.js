@@ -1,33 +1,29 @@
 //set default if no other is defined
-chrome.storage.sync.get(
-  [
-    "background",
-    "websites",
-    "searchEngine",
-    "showSeconds",
-    "showDate",
-    "darkModeFont",
-  ],
-  (data) => {
-    if (data.background === undefined)
-      chrome.storage.sync.set({
-        background: { selected: [0], customBackgrounds: [], currentTab: 0 },
-      });
-    if (data.websites === undefined)
-      chrome.storage.sync.set({
-        websites: [],
-      });
-    if (data.searchEngine === undefined)
-      chrome.storage.sync.set({ searchEngine: "duck" });
-    if (data.showSeconds === undefined)
-      chrome.storage.sync.set({ showSeconds: false });
-    if (data.showDate === undefined)
-      chrome.storage.sync.set({ showDate: true });
-    if (data.darkModeFont === undefined)
-      chrome.storage.sync.set({ darkModeFont: true });
-    loadPage();
-  }
-);
+getStorageValue([
+  "background",
+  "websites",
+  "searchEngine",
+  "showSeconds",
+  "showDate",
+  "darkModeFont",
+  "notepad",
+]).then((data) => {
+  if (data.background === undefined)
+    setStorageValue({
+      background: { selected: [0], customBackgrounds: [], currentTab: 0 },
+    });
+  if (data.websites === undefined)
+    setStorageValue({
+      websites: [],
+    });
+  if (data.searchEngine === undefined)
+    setStorageValue({ searchEngine: "duck" });
+  if (data.showSeconds === undefined) setStorageValue({ showSeconds: false });
+  if (data.showDate === undefined) setStorageValue({ showDate: true });
+  if (data.darkModeFont === undefined) setStorageValue({ darkModeFont: true });
+  loadPage();
+});
+
 const content_wrapper = document.getElementById("content_wrapper");
 
 async function loadPage() {
@@ -35,10 +31,10 @@ async function loadPage() {
   document.getElementById("show_seconds").addEventListener("click", (e) => {
     if (e.target.classList.contains("checked")) {
       e.target.classList.remove("checked");
-      chrome.storage.sync.set({ showSeconds: false });
+      setStorageValue({ showSeconds: false });
     } else {
       e.target.classList.add("checked");
-      chrome.storage.sync.set({ showSeconds: true });
+      setStorageValue({ showSeconds: true });
     }
   });
 
@@ -46,10 +42,10 @@ async function loadPage() {
   document.getElementById("show_date").addEventListener("click", (e) => {
     if (e.target.classList.contains("checked")) {
       e.target.classList.remove("checked");
-      chrome.storage.sync.set({ showDate: false });
+      setStorageValue({ showDate: false });
     } else {
       e.target.classList.add("checked");
-      chrome.storage.sync.set({ showDate: true });
+      setStorageValue({ showDate: true });
     }
   });
 
@@ -57,16 +53,16 @@ async function loadPage() {
   document.getElementById("show_notepad").addEventListener("click", (e) => {
     if (e.target.classList.contains("checked")) {
       e.target.classList.remove("checked");
-      chrome.storage.sync.set({ notepad: null });
+      setStorageValue({ notepad: null });
     } else {
       e.target.classList.add("checked");
-      chrome.storage.sync.set({ notepad: "" });
+      setStorageValue({ notepad: "" });
     }
   });
 
   //laod dark mode font color checkbox action
   document.getElementById("dark_mode_font").addEventListener("click", (e) => {
-    chrome.storage.sync.set({
+    setStorageValue({
       darkModeFont: !e.target.classList.contains("checked"),
     });
     e.target.classList.toggle("checked");
@@ -96,7 +92,7 @@ async function loadPage() {
         );
         e.target.classList.add("checked");
         const engine = e.target.getAttribute("engine");
-        chrome.storage.sync.set({
+        setStorageValue({
           searchEngine: engine === "clear" ? null : engine,
         });
       }

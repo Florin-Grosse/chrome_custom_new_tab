@@ -2,7 +2,7 @@ async function searchInit() {
   let { searchEngine } = await getStorageValue(["searchEngine"]);
 
   if (searchEngine === undefined) {
-    chrome.storage.sync.set({ searchEngine: "duck" });
+    setStorageValue({ searchEngine: "duck" });
     searchEngine = "duck";
   }
 

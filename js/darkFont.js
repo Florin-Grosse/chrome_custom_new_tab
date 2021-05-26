@@ -2,7 +2,7 @@ async function fontInit() {
   let { darkModeFont } = await getStorageValue(["darkModeFont"]);
 
   if (darkModeFont === undefined) {
-    chrome.storage.sync.set({ darkModeFont: true });
+    setStorageValue({ darkModeFont: true });
     darkModeFont = true;
   }
 

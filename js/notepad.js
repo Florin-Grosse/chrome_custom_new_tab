@@ -4,7 +4,7 @@ async function notepadInit() {
   let { notepad } = await getStorageValue(["notepad"]);
 
   if (notepad === undefined) {
-    chrome.storage.sync.set({ notepad: "" });
+    setStorageValue({ notepad: "" });
     notepad = "";
   }
 

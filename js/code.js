@@ -1,31 +1,27 @@
 //set default if no other is defined
-chrome.storage.sync.get("websites", (data) => {
-  if (data.websites === undefined)
-    chrome.storage.sync.set(
-      {
-        websites: [
-          {
-            url: "https://www.youtube.de",
-            icon: "https://s.ytimg.com/yts/img/favicon_144-vfliLAfaB.png",
-          },
-          {
-            url: "https://www.docs.google.com/document/u/0/",
-            icon:
-              "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico",
-          },
-          {
-            icon:
-              "https://calendar.google.com/googlecalendar/images/favicon_v2018_256.png",
-            url: "https://calendar.google.com/calendar/b/0/r",
-          },
-          {
-            url: "https://www.amazon.de",
-            icon: "https://www.amazon.de/favicon.ico",
-          },
-        ],
-      },
-      () => console.log("Reseted websites")
-    );
+getStorageValue("websites").then(async (data) => {
+  if (data === undefined) {
+    await setStorageValue({
+      websites: [
+        {
+          url: "https://www.youtube.de",
+          icon: "https://s.ytimg.com/yts/img/favicon_144-vfliLAfaB.png",
+        },
+        {
+          url: "https://www.docs.google.com/document/u/0/",
+          icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico",
+        },
+        {
+          url: "https://calendar.google.com/calendar/b/0/r",
+          icon: "https://calendar.google.com/googlecalendar/images/favicon_v2018_256.png",
+        },
+        {
+          url: "https://www.amazon.de",
+          icon: "https://www.amazon.de/favicon.ico",
+        },
+      ],
+    });
+  }
   loadPage();
 });
 
@@ -50,7 +46,7 @@ const small_icon_span = document.querySelector(
 );
 
 // update if setting change
-chrome.storage.onChanged.addListener((changes) => {
+changeListener.push((changes) => {
   if (changes.websites !== undefined) {
     websites = changes.websites.newValue;
     loadWebsites();
@@ -147,48 +143,41 @@ function closeOverlay() {
   html.classList.remove("overlay");
 }
 
-function addWebsite() {
+async function addWebsite() {
   if (url.value !== "" && icon.value !== "") {
-    chrome.storage.sync.set(
-      {
-        websites: [
-          ...websites,
-          ...[
-            {
-              url: url.value,
-              icon: icon.value,
-              small_icon:
-                small_icon.value === "" ? undefined : small_icon.value,
-            },
-          ],
+    await setStorageValue({
+      websites: [
+        ...websites,
+        ...[
+          {
+            url: url.value,
+            icon: icon.value,
+            small_icon: small_icon.value === "" ? undefined : small_icon.value,
+          },
         ],
-      },
-      () => {
-        console.log("Added website", {
-          url: url.value,
-          icon: icon.value,
-          small_icon: small_icon.value === "" ? undefined : small_icon.value,
-        });
-        closeOverlay();
-        reloadPage();
-      }
-    );
+      ],
+    });
+    console.log("Added website", {
+      url: url.value,
+      icon: icon.value,
+      small_icon: small_icon.value === "" ? undefined : small_icon.value,
+    });
+    closeOverlay();
+    reloadPage();
   }
 }
 
-function removeWebsite() {
-  chrome.storage.sync.set(
-    {
-      websites: [
-        ...websites.slice(0, context_menu_current_index),
-        ...websites.slice(context_menu_current_index + 1),
-      ],
-    },
-    () => console.log("Removed website", websites[context_menu_current_index])
-  );
+async function removeWebsite() {
+  await setStorageValue({
+    websites: [
+      ...websites.slice(0, context_menu_current_index),
+      ...websites.slice(context_menu_current_index + 1),
+    ],
+  });
+  console.log("Removed website", websites[context_menu_current_index]);
 }
 
-function editWebsite() {
+async function editWebsite() {
   if (url.value !== "" && icon.value !== "") {
     websites[context_menu_current_index] =
       small_icon.value === ""
@@ -201,20 +190,14 @@ function editWebsite() {
             icon: icon.value,
             small_icon: small_icon.value,
           };
-    chrome.storage.sync.set(
-      {
-        websites: websites,
-      },
-      () => {
-        console.log("Edited website", {
-          url: url.value,
-          icon: icon.value,
-          small_icon: small_icon.value === "" ? undefined : small_icon.value,
-        });
-        closeOverlay();
-        reloadPage();
-      }
-    );
+    await setStorageValue({ websites });
+    console.log("Edited website", {
+      url: url.value,
+      icon: icon.value,
+      small_icon: small_icon.value === "" ? undefined : small_icon.value,
+    });
+    closeOverlay();
+    reloadPage();
   }
 }
 
