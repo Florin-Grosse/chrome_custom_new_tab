@@ -44,6 +44,7 @@ function overlayInit() {
     html.classList.add("overlay");
     header.innerHTML = headerText;
     button.innerHTML = buttonText;
+    wrapper.innerHTML = "";
     wrapper.innerHTML = inputs
       .map(
         (input) =>

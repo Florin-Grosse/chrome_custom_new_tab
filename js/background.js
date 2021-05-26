@@ -118,52 +118,43 @@ async function backgroundInit() {
         // add delete eventListener
         const deleteSvg = ele.querySelector(".deleteSvg");
         if (deleteSvg)
-          deleteSvg.addEventListener("click", (e) => {
-            openOverlay(
-              () => {
-                e.preventDefault();
-                const id = Number(ele.getAttribute("bgId"));
-                selected = selected.filter((ele) => ele !== id);
-                customBackgrounds = customBackgrounds.filter(
-                  (bg) => bg.id !== id
-                );
+          deleteSvg.addEventListener("click", async (e) => {
+            try {
+              await openOverlay("Confirm deletion", "Delete", []);
+              e.preventDefault();
+              const id = Number(ele.getAttribute("bgId"));
+              selected = selected.filter((ele) => ele !== id);
+              customBackgrounds = customBackgrounds.filter(
+                (bg) => bg.id !== id
+              );
 
-                setStorageValue({
-                  background: {
-                    selected,
-                    customBackgrounds,
-                    currentTab: current,
-                  },
-                });
-                closeOverlay();
-              },
-              "Delete",
-              "Please confirm that you want to delete this background",
-              false,
-              false,
-              false
-            );
+              setStorageValue({
+                background: {
+                  selected,
+                  customBackgrounds,
+                  currentTab: current,
+                },
+              });
+            } catch (_) {}
           });
       });
 
     // add eventListener to add button
     document
       .querySelector(".gradient_option.add_background")
-      .addEventListener("click", () => {
-        openOverlay(
-          () => {
-            if (url.value === "") return;
-            customBackgrounds.push({ bg: url.value, id: getNewId() });
-            setStorageValue({
-              background: { selected, customBackgrounds, currentTab: current },
-            });
-            closeOverlay();
-          },
-          "Apply",
-          "Add Background",
-          false,
-          false
-        );
+      .addEventListener("click", async () => {
+        try {
+          const [bg] = await openOverlay(
+            "Add Background",
+            "Apply",
+            [""],
+            (val) => val[0]
+          );
+          customBackgrounds.push({ bg: bg, id: getNewId() });
+          setStorageValue({
+            background: { selected, customBackgrounds, currentTab: current },
+          });
+        } catch (_) {}
       });
   }
 

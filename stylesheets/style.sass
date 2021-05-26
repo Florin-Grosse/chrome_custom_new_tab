@@ -353,6 +353,9 @@ body
         overflow: hidden
         height: 100%
         z-index: -1
+        display: flex
+        justify-content: center
+        align-items: center
         // transition is added via js to prevent transition to show element when page loads
         // transition: opacity .25s ease-in-out
         #gradient_options
@@ -361,7 +364,8 @@ body
             align-items: flex-start
             justify-content: space-between
             width: 80%
-            padding-top: 10%
+            max-height: 100%
+            overflow-y: auto
             margin: 0 auto
 
     &:not(.open) #gradient_options_wrapper
