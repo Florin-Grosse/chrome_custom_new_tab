@@ -1,6 +1,5 @@
-const cssBackgroundPrefix = "center center / cover ";
-
 async function backgroundInit() {
+  const cssBackgroundPrefix = "center center / cover ";
   let { customBackgrounds, selected } = {
     customBackgrounds: [],
     selected: [0],

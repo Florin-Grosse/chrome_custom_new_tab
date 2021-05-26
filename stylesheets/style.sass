@@ -147,7 +147,7 @@ body
     margin-right: 1rem
 
 /*--- add website overlay ---*/
-#add_website_overlay
+#overlay
     position: fixed
     z-index: 100
     top: 0
@@ -158,7 +158,7 @@ body
     transition: opacity .45s ease-in-out
     width: 100%
     height: 100%
-    div
+    .overlay_wrapper
         background-color: transparentize(#353535, .2)
         border-radius: var(--border-radius)
         padding: 5vmin 10vmin
@@ -168,6 +168,9 @@ body
         min-height: 20vh
         h1
             margin: 0
+        #overlay_inputs
+            display: flex
+            flex-direction: column
         span
             width: 100%
             text-align: left
@@ -203,7 +206,7 @@ body
         border-radius: 50%
         padding: 1vmin
 
-.overlay #add_website_overlay
+.overlay #overlay
     opacity: 1
     display: flex
 
