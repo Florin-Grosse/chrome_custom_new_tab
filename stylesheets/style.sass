@@ -2,7 +2,7 @@ body
     margin: 0
     *
         box-sizing: border-box
-        color: var(--font-color)
+        color: var(--text)
         font-family: Poppins
 
 /*--- body ---*/
@@ -52,7 +52,7 @@ body
     left: 10vw
     z-index: 100
     span
-        background-color: var(--background-color)
+        background-color: var(--bg)
         transition: opacity .15s ease-in-out
         opacity: .5
         cursor: pointer
@@ -78,7 +78,7 @@ body
 
 .website_icon
     position: relative
-    background-color: var(--background-color-transparent)
+    background-color: var(--bg-transparent)
     border-radius: var(--border-radius)
     display: flex
     align-items: center
@@ -152,13 +152,13 @@ body
         input
             background-color: transparent
             outline: none
-            border: .15vmin solid var(--font-color-transparent)
+            border: .15vmin solid var(--text-transparent)
             border-radius: var(--border-radius)
             padding: 1vmin
             width: 100%
             min-width: 15rem
         button
-            background-color: var(--background-color)
+            background-color: var(--bg)
             border: 0
             outline: none
             border-radius: var(--border-radius)
@@ -176,7 +176,7 @@ body
         height: 5vmin
         width: 5vmin
         cursor: pointer
-        background-color: var(--background-color-transparent)
+        background-color: var(--bg-transparent)
         border-radius: 50%
         padding: 1vmin
 
@@ -187,7 +187,7 @@ body
 
 /*--- search bar --- */
 #search_bar
-    background-color: var(--background-color-transparent)
+    background-color: var(--bg-transparent)
     outline: none
     border: 0
     height: 3.5rem
@@ -196,9 +196,9 @@ body
     padding-left: .5rem
     margin: auto
     font-size: 1.25rem
-    color: var(--font-color)
+    color: var(--text)
     &::placeholder
-        color: var(--font-color-transparent)
+        color: var(--text-transparent)
 
 
 /*--- Clock and Date ---*/
@@ -240,8 +240,8 @@ body
         height: 100%
         border: none
         outline: none
-        background: var(--background-color-transparent)
-        color: var(--font-color)
+        background: var(--bg-transparent)
+        color: var(--text)
         padding: .5rem
         border-radius: var(--border-radius)
 
@@ -270,12 +270,12 @@ body
             pointer-events: none
     
     #gradient_options_wrapper
-        --size: 5rem
+        --size: 8vw
         top: 0
         left: 0
         position: fixed
         width: 100%
-        background-color: var(--background-color-transparent)
+        background-color: var(--bg-transparent)
         overflow: hidden
         height: 100%
         z-index: -1
@@ -286,6 +286,9 @@ body
             flex-wrap: wrap
             align-items: flex-start
             justify-content: space-between
+            width: 80%
+            padding-top: 10%
+            margin: 0 auto
 
     &:not(.open) #gradient_options_wrapper
         opacity: 0
@@ -304,9 +307,9 @@ body
     .gradient_option
         position: relative
         cursor: pointer
-        border: .15vmin solid var(--font-color)
+        border: .15vmin solid var(--text)
         border-radius: 50%
-        background: var(--background)
+        background: var(--gradient)
         transition: transform .25s ease-in-out
         
         width: var(--size)
@@ -327,11 +330,11 @@ body
             left: 0
             height: 100%
             width: 100%
-            fill: var(--font-color)
+            fill: var(--text)
 
         .deleteSvg
             transition: opacity .2s ease-in-out
-            fill: var(--font-color)
+            fill: var(--text)
             opacity: 0
             z-index: 1
             position: absolute
@@ -346,7 +349,7 @@ body
             display: flex
             justify-content: center
             align-items: center
-            background: var(--background-color-transparent)
+            background: var(--bg-transparent)
             svg
                 height: calc(var(--size) / 3 * 2)
                 width: calc(var(--size) / 3 * 2)

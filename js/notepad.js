@@ -1,16 +1,19 @@
 const listStartString = "- ";
 
 async function notepadInit() {
-  let { notepad } = await getStorageValue(["notepad"]);
+  let { notepad, showNotepad } = await getStorageValue([
+    "notepad",
+    "showNotepad",
+  ]);
 
   if (notepad === undefined) {
-    setStorageValue({ notepad: "" });
+    setStorageValue({ notepad: "", showNotepad: true });
     notepad = "";
   }
 
   const notepadEle = document.querySelector("#notepad textarea");
   function updateNotepad() {
-    if (notepad === null) notepadEle.style.display = "none";
+    if (!showNotepad) notepadEle.style.display = "none";
     else {
       notepadEle.style.display = null;
       notepadEle.value = notepad;
@@ -20,9 +23,19 @@ async function notepadInit() {
   function initNotepad() {
     updateNotepad();
 
-    //
+    // value to prevent input eventListener to overwrite changes from keydown listener
+    enter = false;
+
+    notepadEle.addEventListener("input", () => {
+      if (enter) return (enter = false);
+      notepad = notepadEle.value;
+      setStorageValue({ notepad });
+    });
+
+    // eventListener for enter key to possibly add a dash to the next line
     notepadEle.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftkey) {
+        enter = true;
         const lines = notepadEle.value.split("\n");
         let temp = notepadEle.selectionStart;
         const currentLineIndex = lines.findIndex((line) => {
@@ -54,9 +67,6 @@ async function notepadInit() {
               selectionStart + listStartString.length + 1;
           });
         }
-      } else {
-        notepad = notepadEle.value;
-        setStorageValue({ notepad });
       }
     });
 
@@ -65,12 +75,20 @@ async function notepadInit() {
 
   // global change listener
   changeListener.push((changes) => {
+    let update = false;
     if (changes.notepad !== undefined) {
       if (notepad !== changes.notepad.newValue) {
         notepad = changes.notepad.newValue;
-        updateNotepad();
+        update = true;
       }
     }
+    if (changes.showNotepad !== undefined) {
+      if (showNotepad !== changes.showNotepad.newValue) {
+        showNotepad = changes.showNotepad.newValue;
+        update = true;
+      }
+    }
+    if (update) updateNotepad();
   });
 
   initNotepad();

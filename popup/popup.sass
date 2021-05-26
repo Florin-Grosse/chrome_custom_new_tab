@@ -1,20 +1,94 @@
+/*--- General ---*/
+:root
+  --uni-text: #333
+  --uni-text-2: #777
+  --uni-bg: white
+  --uni-bg-2: #f0f0f0
+
 body
+  width: 16rem
+  height: 24rem
   margin: 0
+  color: var(--uni-text)
+  background: var(--uni-bg-2)
+  display: flex
+  flex-direction: column
   *
-    color: var(--font-color)
+    box-sizing: border-box
 
-#content_wrapper
-  width: 12rem
-  padding: 2rem
-  background: var(--background)
-  h1
-    margin-top: 0
-    margin-bottom: .5rem
-    font-size: 2rem
-    line-height: 2rem
-    height: 2rem
+.header
+  background: var(--gradient)
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  z-index: -1
+  height: 4rem
 
+.settings
+  z-index: 1
+  overflow: hidden
+  flex: 1 0 auto
+  max-height: 21rem
+  position: relative
+  .page
+    width: 100%
+    padding: calc(1em + 4rem) .5em 2em
+    height: 100%
+    overflow-y: auto
+    position: absolute
+    top: 0
+    left: 0
+    transition: left .25s linear
+    &:not(.active)
+      left: -100%
+    &.active
+      animation: slide-in .25s linear
+      left: 0
+      &.initial_load
+        animation: none
+    .page_header
+      position: absolute
+      top: 0
+      left: 0
+      width: 100%
+      height: 4rem
+      margin: 0
+      padding: .5rem 1rem
+      color: var(--text)
+      font-size: 2.5em
+      line-height: 3rem
 
+@keyframes slide-in
+  from
+    left: 100%
+  to
+    left: 0
+    
+
+/*--- navigation bar ---*/
+.navigation_bar
+  height: 3rem
+  display: flex
+  justify-content: space-evenly
+  align-items: center
+  padding: .4rem
+  background: var(--uni-bg)
+  .navigation_item
+    cursor: pointer
+    flex: 1 1 0
+    height: 100%
+    display: flex
+    justify-content: center
+    align-items: center
+    svg
+      height: 100%
+    &:not(.active) svg
+      fill: var(--uni-text-2)
+    &.active svg
+      fill: var(--uni-text)
+
+/*--- Inputs / settings ---*/
 /*--- checkbox input ---*/
 .checkbox_input
   display: flex
@@ -32,10 +106,10 @@ body
 .svg_checkbox
   height: 1.5rem
   width: 1.5rem
-  fill: var(--font-color)
+  fill: var(--uni-text)
   .svg_checkbox_true
     opacity: 0
-    transition: opacity .15s ease-in-out
+    // transition: opacity .15s linear
 
 /*--- multiple choice ---*/
 .multiple_choice

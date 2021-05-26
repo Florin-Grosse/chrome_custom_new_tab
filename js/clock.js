@@ -1,7 +1,8 @@
 async function clockInit() {
-  let { showSeconds, showDate } = await getStorageValue([
+  let { showSeconds, showDate, showTime } = await getStorageValue([
     "showSeconds",
     "showDate",
+    "showTime",
   ]);
 
   if (showSeconds === undefined) {
@@ -12,6 +13,11 @@ async function clockInit() {
   if (showDate === undefined) {
     setStorageValue({ showSeconds: true });
     showDate = false;
+  }
+
+  if (showTime === undefined) {
+    setStorageValue({ showTime: true });
+    showTime = true;
   }
 
   const date = document.getElementById("date");
@@ -59,9 +65,17 @@ async function clockInit() {
       "</p>";
   }
 
+  function updateVisibility() {
+    if (showTime) clock.style.display = null;
+    else clock.style.display = "none";
+  }
+
   loadDate();
   loadClock();
-  clockInterval = setInterval(loadClock, showSeconds ? 200 : 5000);
+  updateVisibility();
+  clockInterval = showTime
+    ? setInterval(loadClock, showSeconds ? 200 : 5000)
+    : undefined;
 
   // global change listener
   changeListener.push((changes) => {
@@ -69,11 +83,17 @@ async function clockInit() {
       showDate = changes.showDate.newValue;
       loadDate();
     }
+    if (changes.showTime !== undefined) {
+      showTime = changes.showTime.newValue;
+      updateVisibility();
+    }
     if (changes.showSeconds !== undefined) {
       showSeconds = changes.showSeconds.newValue;
       clearInterval(clockInterval);
       loadClock();
-      clockInterval = setInterval(loadClock, showSeconds ? 200 : 5000);
+      clockInterval = showTime
+        ? setInterval(loadClock, showSeconds ? 200 : 5000)
+        : undefined;
     }
   });
 }
