@@ -16,19 +16,35 @@ body
 #content_wrapper
     --padding: 5vmin
     position: absolute
-    height: calc(100vh - 2 * var(--padding))
+    height: calc(100vh - var(--padding))
     width: calc(100vw - 2 * var(--padding))
     top: var(--padding)
     left: var(--padding)
+    display: flex
+    @media (orientation: portrait)
+        flex-direction: column-reverse
+        justify-content: flex-end
+        align-content: flex-start
 
 .left_side
     display: flex
     flex-direction: column
     align-items: flex-start
+
+.right_side
+    position: relative
+    display: flex
     @media (orientation: landscape)
-        max-width: 75%
+        max-width: 50%
+        flex-direction: column
+        justify-content: flex-start
+        align-content: flex-end
+        flex: 1 0 auto
     @media (orientation: portrait)
-        margin-top: 10rem
+        justify-content: flex-end
+        align-content: flex-start
+        width: 100%
+        margin-bottom: 1rem
 
 /*--- style classes ---*/
 .hover_highlight
@@ -75,6 +91,9 @@ body
 #website_icon_wrapper
     display: flex
     flex-wrap: wrap
+    @media screen and ( orientation: portrait )
+        width: 100%
+        justify-content: center
 
 .website_icon
     position: relative
@@ -122,6 +141,10 @@ body
         display: none
     &.error img
         display: none
+
+.website_icon_filler
+    width: 6rem
+    margin-right: 1rem
 
 /*--- add website overlay ---*/
 #add_website_overlay
@@ -186,12 +209,19 @@ body
 
 
 /*--- search bar --- */
+#search_bar_form
+    margin-bottom: 1rem
+    @media (orientation: landscape)
+        width: 25rem
+    @media (orientation: portrait)
+        width: 100%
+
 #search_bar
     background-color: var(--bg-transparent)
     outline: none
     border: 0
     height: 3.5rem
-    width: 25rem
+    width: 100%
     border-radius: var(--border-radius)
     padding-left: .5rem
     margin: auto
@@ -203,13 +233,13 @@ body
 
 /*--- Clock and Date ---*/
 #time_wrapper
-    position: fixed
-    top: 5vmin
     display: flex
     flex-direction: column
-    align-items: flex-end
     @media (orientation: landscape)
-        right: 5vmin
+        align-items: flex-end
+        margin-left: 5vw
+    @media (orientation: portrait)
+        margin-right: 1rem
 
 #clock
     font-size: 5rem
@@ -229,11 +259,9 @@ body
 
 /*--- Notpad ---*/
 #notepad
-    width: 25%
-    height: 10rem
-    position: absolute
-    right: 0
-    top: calc(5vmin + 10rem)
+    min-height: 12.5vw
+    height: 12.5vw
+    width: 20vw
     textarea
         resize: none
         width: 100%
@@ -245,6 +273,11 @@ body
         padding: .5rem
         border-radius: var(--border-radius)
 
+    @media (orientation: landscape)
+        margin-left: 5vw
+    @media screen and (orientation: portrait)
+        height: 100%
+        flex: 1 0 20vw
 
 /*--- settings ---*/
 #settings

@@ -12,10 +12,11 @@ async function notepadInit() {
   }
 
   const notepadEle = document.querySelector("#notepad textarea");
+  const wrapper = document.getElementById("notepad");
   function updateNotepad() {
-    if (!showNotepad) notepadEle.style.display = "none";
+    if (!showNotepad) wrapper.style.display = "none";
     else {
-      notepadEle.style.display = null;
+      wrapper.style.display = null;
       notepadEle.value = notepad;
     }
   }

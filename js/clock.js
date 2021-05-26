@@ -29,6 +29,7 @@ async function clockInit() {
         ", " +
         new Date().toLocaleDateString("de");
     } else date.style.display = "none";
+    updateVisibility();
   }
 
   const clock = document.getElementById("clock");
@@ -63,16 +64,24 @@ async function clockInit() {
             .join('</p><p class="clock_time">')
         : "") +
       "</p>";
+    loadDate();
   }
 
-  function updateVisibility() {
+  function clockVisibility() {
     if (showTime) clock.style.display = null;
     else clock.style.display = "none";
+    updateVisibility();
+  }
+
+  const timeWrapper = document.getElementById("time_wrapper");
+  function updateVisibility() {
+    if (!showTime && !showDate) timeWrapper.style.display = "none";
+    else timeWrapper.style.display = null;
   }
 
   loadDate();
   loadClock();
-  updateVisibility();
+  clockVisibility();
   clockInterval = showTime
     ? setInterval(loadClock, showSeconds ? 200 : 5000)
     : undefined;
@@ -85,7 +94,7 @@ async function clockInit() {
     }
     if (changes.showTime !== undefined) {
       showTime = changes.showTime.newValue;
-      updateVisibility();
+      clockVisibility();
     }
     if (changes.showSeconds !== undefined) {
       showSeconds = changes.showSeconds.newValue;
