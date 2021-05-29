@@ -11,7 +11,7 @@ async function clockInit() {
   }
 
   if (showDate === undefined) {
-    setStorageValue({ showSeconds: true });
+    setStorageValue({ showDate: true });
     showDate = false;
   }
 

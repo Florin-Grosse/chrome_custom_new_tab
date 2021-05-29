@@ -210,7 +210,9 @@ async function backgroundInit() {
   changeListener.push((changes) => {
     if (changes.background !== undefined) {
       ({ customBackgrounds, selected } = changes.background.newValue);
-      loadBackground(changes.background.oldValue.selected);
+      loadBackground(
+        changes.background.oldValue ? changes.background.oldValue.selected : 0
+      );
       updateGradientIcons();
     }
   });
