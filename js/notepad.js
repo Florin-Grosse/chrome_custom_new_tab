@@ -14,9 +14,9 @@ async function notepadInit() {
   const notepadEle = document.querySelector("#notepad textarea");
   const wrapper = document.getElementById("notepad");
   function updateNotepad() {
-    if (!showNotepad) wrapper.style.display = "none";
+    if (!showNotepad) wrapper.style.display = null;
     else {
-      wrapper.style.display = null;
+      wrapper.style.display = "initial";
       notepadEle.value = notepad;
     }
   }

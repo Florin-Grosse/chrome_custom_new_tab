@@ -11,6 +11,7 @@ body
     position: fixed
     background-position: center center
     background-size: cover
+    background: #3d3d3d
 
 #content_wrapper
     --padding: 5vmin
@@ -113,6 +114,12 @@ body
                 width: 6rem
                 height: 100%
                 margin: 0 1rem
+
+    &:not(.drag_n_drop)
+        .website_icon
+            margin-right: 1rem
+        .website_icon_margin
+            display: none
 
 @keyframes wiggle
     0%
@@ -303,6 +310,7 @@ body
     min-height: 12.5vw
     height: 12.5vw
     width: 20vw
+    display: none
     textarea
         resize: none
         width: 100%
@@ -328,9 +336,9 @@ body
     width: 3rem
     height: 2.5rem
     padding: 0 .25rem
-    cursor: pointer
 
     >svg
+        cursor: pointer
         flex: 0 0 5vmin
         width: 5vmin
 
