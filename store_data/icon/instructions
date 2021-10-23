@@ -1,0 +1,1 @@
+"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --headless --screenshot="C:\temp\screenshot.png" --window-size=1080,1080 "http://127.0.0.1:5500/icon/icon.html"

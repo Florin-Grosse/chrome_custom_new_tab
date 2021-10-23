@@ -4,7 +4,7 @@
   "main": "index.html",
   "license": "ISC",
   "scripts": {
-    "SASS compile": "sass --watch ./"
+    "SASS": "sass --watch ./"
   },
   "devDependencies": {},
   "dependencies": {
