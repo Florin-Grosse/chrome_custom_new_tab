@@ -10,7 +10,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       let websites = data.websites;
       websites.push({ url: info.pageUrl, icon: tab.favIconUrl });
       chrome.storage.sync.set({
-        websites: websites,
+        websites,
       });
     });
 });
