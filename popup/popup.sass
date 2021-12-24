@@ -39,11 +39,10 @@ body
     position: absolute
     top: 0
     left: -100%
-    transition: left .25s linear
+    &.active, &.lastActive
+      transition: left .25s ease-in-out
     &.active
       left: 0
-      &.initial_load
-        animation: none
     .page_header
       position: absolute
       top: 0
@@ -58,12 +57,6 @@ body
 
   .active ~ .page
     left: 100%
-
-@keyframes slide-in
-  from
-    left: 100%
-  to
-    left: 0
     
 
 /*--- navigation bar ---*/

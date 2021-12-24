@@ -31,7 +31,13 @@ async function loadPage() {
 
       navItems.forEach((item) => item.classList.remove("active"));
       item.classList.add("active");
-      pages.forEach((page) => page.classList.remove("active"));
+      pages.forEach((page) => {
+        page.classList.remove("lastActive");
+        if (page.classList.contains("active")) {
+          page.classList.add("lastActive");
+          page.classList.remove("active");
+        }
+      });
       pages[0].classList.remove("initial_load");
       pages[i].classList.add("active");
     });
