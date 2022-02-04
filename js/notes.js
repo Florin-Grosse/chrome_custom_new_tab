@@ -26,6 +26,12 @@ async function notepadInit() {
   const wrapper = document.getElementById("notepad");
   const addNoteButton = document.getElementById("add_note");
 
+  const setStorageNotes = debounce(
+    () => setStorageValue({ notes }),
+    1000,
+    1000
+  );
+
   function setNotesVisibility() {
     if (!showNotes) wrapper.style.display = null;
     else wrapper.style.display = "initial";
@@ -58,6 +64,8 @@ async function notepadInit() {
       notes.push({ id, note: "" });
       setStorageValue({ notes });
     });
+
+    window.addEventListener("beforeunload", () => setStorageValue({ notes }));
   }
 
   // updates DOM and textarea values from current notes value
@@ -77,7 +85,8 @@ async function notepadInit() {
       if (current) {
         // don't update focused to not mess up cursor position and tabbing out blurs and sets focused to -1
         if (current.textarea.value !== note && id !== focused) {
-          textarea.value = note;
+          current.textarea.value = note;
+          resizeTextarea(current.textarea);
         }
         // add new notes
       } else addNote(id, note);
@@ -130,7 +139,7 @@ async function notepadInit() {
       const eleId = getId(element);
       notes.find(({ id }) => id == eleId).note = textarea.value;
       resizeTextarea(textarea);
-      setStorageValue({ notes });
+      setStorageNotes();
     });
     // eventListener for enter key to possibly add a dash to the next line
     textarea.addEventListener("keydown", (e) => {
@@ -172,7 +181,7 @@ async function notepadInit() {
         const eleId = getId(element);
         notes.find(({ id }) => id == eleId).note = newValue;
 
-        setStorageValue({ notes });
+        setStorageNotes();
         const selectionStart = textarea.selectionStart;
         const selectionEnd = textarea.selectionEnd;
 
@@ -213,17 +222,8 @@ async function notepadInit() {
   // global change listener
   changeListener.push((changes) => {
     if (changes.notes !== undefined) {
-      if (
-        notes.some(
-          ({ note, id }) =>
-            changes.notes.newValue.find((note1) => note1.id === id).note !==
-            note
-        ) ||
-        notes.length === changes.notes.newValue.length
-      ) {
-        notes = changes.notes.newValue;
-        updateNotes();
-      }
+      notes = changes.notes.newValue;
+      updateNotes();
     }
     if (changes.showNotes !== undefined) {
       if (showNotes !== changes.showNotes.newValue) {

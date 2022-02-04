@@ -61,3 +61,31 @@ chrome.storage.onChanged.addListener((changes) => {
     listener(changes);
   });
 });
+
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(func, debounce, maximumTime) {
+  let timeoutAfterFinish;
+  let periodicTimeout;
+  return function () {
+    let context = this,
+      args = arguments;
+
+    let callNow = !timeoutAfterFinish;
+    clearTimeout(timeoutAfterFinish);
+    timeoutAfterFinish = setTimeout(
+      () => (timeoutAfterFinish = null),
+      debounce
+    );
+    if (callNow) func.apply(context, args);
+
+    if (!periodicTimeout) {
+      periodicTimeout = setTimeout(() => {
+        func.apply(context, args);
+        periodicTimeout = null;
+      }, maximumTime);
+    }
+  };
+}
