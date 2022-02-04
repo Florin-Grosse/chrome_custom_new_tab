@@ -9,10 +9,17 @@
     "selected": [2, 4, 10, 1]
   },
   "darkModeFont": true,
+  "--notepade": "deprecated",
   "notepad": "content of notepad",
+  "notes": [
+    { "id": 1, "note": "note1" },
+    { "id": 2, "note": "note2" }
+  ],
   "searchEngine": "duck | ecosia | google | qwant | null",
   "showDate": true,
+  "--showNotepad": "deprecated",
   "showNotepad": true,
+  "showNotes": true,
   "showSeconds": true,
   "showTime": true,
   "websites": [
