@@ -1,11 +1,12 @@
 {
-  "activeTab": 0,
-  "--activeTab": "id of background of last active tab (for popup background)",
   "background": {
+    "currentTab": 2,
+    "--currentTab": "background id of the gradient of the current tab",
     "customBackgrounds": [
       { "bg": "linear-gradient(45deg, red, blue)", "id": 1 },
       { "bg": "src(\"imgurl\")", "id": 2 }
-    ]
+    ],
+    "selected": [2, 4, 10, 1]
   },
   "darkModeFont": true,
   "notepad": "content of notepad",

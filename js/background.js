@@ -19,25 +19,28 @@ async function backgroundInit() {
   let current = 0;
   resetCurrent(); // init value
 
+  // randomly chooses a background of the available
   function resetCurrent() {
     current = selected[Math.round(Math.random() * (selected.length - 1))];
   }
 
   const background_element = document.getElementById("background");
   // changes background
+  // if id is defined current is set
+  // otherwise "current" is applied as background
   function loadBackground(id) {
-    if (id) current = id;
+    if (id !== undefined) current = id;
 
     if (!selected.includes(current)) {
-      if (current < gradientAmount)
-        background_element.classList.remove("gradient" + current);
+      if (current < backgroundAmount)
+        background_element.classList.remove("background" + current);
 
       resetCurrent();
     }
 
-    background_element.classList = "";
+    background_element.classList.remove(...background_element.classList);
 
-    if (current >= gradientAmount) {
+    if (current >= backgroundAmount) {
       // custom background selected
       background_element.style.background =
         cssBackgroundPrefix +
@@ -45,136 +48,168 @@ async function backgroundInit() {
     } else {
       // background is one of default ones
       background_element.style.background =
-        cssBackgroundPrefix + "var(--gradient)";
-      background_element.classList.add("gradient" + current);
+        cssBackgroundPrefix + "var(--background)";
+      background_element.classList.add("background" + current);
     }
   }
 
   const settings = document.getElementById("settings");
-  const gradientIcons = document.getElementById("gradient_options");
-  // load current gradientIcons and custom backgrounds
-  function updateGradientIcons() {
-    const gradientIconsHTML = Array.from(
-      { length: gradientAmount },
-      (_, i) => i
-    )
-      .map(
-        (index) =>
-          '<div class="gradient' +
-          index +
-          " gradient_option" +
-          (selected.includes(index) ? " selected" : "") +
-          '" bgId="' +
-          index +
-          '">' +
-          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="selectedSvg"><path d="M9 16.2l-3.5-3.5c-.39-.39-1.01-.39-1.4 0-.39.39-.39 1.01 0 1.4l4.19 4.19c.39.39 1.02.39 1.41 0L20.3 7.7c.39-.39.39-1.01 0-1.4-.39-.39-1.01-.39-1.4 0L9 16.2z"/></svg>' +
-          "</div>"
-      )
-      .join("");
+  const backgroundIconsWrapper = document.getElementById("background_options");
+  const backgroundTemplate = document.getElementById(
+    "background_option_template"
+  );
+  const customBackgroundTemplate = document.getElementById(
+    "custom_background_option_template"
+  );
+  const addBackground = document.querySelector(".add_background");
 
-    const customBackgroundsHTML = customBackgrounds
-      .map(
-        (bg) =>
-          `<div class="gradient_option${
-            selected.includes(bg.id) ? " selected" : ""
-          }" bgId="${bg.id}" style="background: ${cssBackgroundPrefix}${
-            bg.bg
-          }">` +
-          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="selectedSvg"><path d="M9 16.2l-3.5-3.5c-.39-.39-1.01-.39-1.4 0-.39.39-.39 1.01 0 1.4l4.19 4.19c.39.39 1.02.39 1.41 0L20.3 7.7c.39-.39.39-1.01 0-1.4-.39-.39-1.01-.39-1.4 0L9 16.2z"/></svg>' +
-          '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="deleteSvg"><path d="m15.5 4-0.71-0.71c-0.18-0.18-0.44-0.29-0.7-0.29h-4.18c-0.26 0-0.52 0.11-0.7 0.29l-0.71 0.71h-2.5c-0.55 0-1 0.45-1 1s0.45 1 1 1h12c0.55 0 1-0.45 1-1s-0.45-1-1-1z"/><path d="m6 19c0 1.1 0.9 2 2 2h8c1.1 0 2-0.9 2-2v-10c0-1.1-0.9-2-2-2h-8c-1.1 0-2 0.9-2 2zm3.17-7.83c0.39-0.39 1.02-0.39 1.41 0l1.42 1.42 1.42-1.42c0.39-0.39 1.02-0.39 1.41 0s0.39 1.02 0 1.41l-1.42 1.42 1.42 1.42c0.39 0.39 0.39 1.02 0 1.41s-1.02 0.39-1.41 0l-1.42-1.42-1.42 1.42c-0.39 0.39-1.02 0.39-1.41 0s-0.39-1.02 0-1.41l1.42-1.42-1.42-1.42c-0.39-0.38-0.39-1.02 0-1.41z"/></svg>' +
-          "</div>"
-      )
-      .join("");
+  // creates a new element for the background id of index
+  // mounts it at the end of the background_options
+  function createBackgroundIcon(id) {
+    const element = (
+      id < backgroundAmount ? backgroundTemplate : customBackgroundTemplate
+    ).content.cloneNode(true).children[0];
+    if (selected.includes(id)) element.classList.add("selected");
+    element.setAttribute("bgId", id);
+    element.addEventListener("click", () => backgroundHandleSelect(id));
 
-    gradientIcons.innerHTML =
-      gradientIconsHTML +
-      customBackgroundsHTML +
-      '<div class="gradient_option add_background"><svg version="1.1" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" fill="var(--text)"><path d="m196.32 66.641c-11.121 1.523-20.336 10.124-22.564 21.061-0.595 2.915-0.629 5.436-0.633 45.856l-3e-3 39.558-83.6 0.091-1.6 0.366c-14.938 3.413-24.046 17.618-20.689 32.267 2.3 10.036 10.618 18.097 20.791 20.149 2.689 0.542 4.748 0.568 44.973 0.57l40.115 1e-3 0.11 82.64 0.344 1.76c3.922 20.053 26.608 28.866 42.711 16.593 5.881-4.482 9.61-11.346 10.28-18.925 0.104-1.172 0.163-16.221 0.164-41.945l1e-3 -40.116 82.8-0.102 1.84-0.356c18.452-3.572 27.69-24.026 18.113-40.109-3.707-6.226-10.064-10.727-17.57-12.439l-1.583-0.361-83.6-0.084v-40.381c0-40.733-0.018-42.1-0.577-44.895-2.746-13.713-15.951-23.099-29.823-21.199" fill-rule="evenodd"/></svg></div>' +
-      Array.from({ length: 16 }, (_, i) => i)
-        .map(() => `<div class="gradient_option_filler"></div>`)
-        .join("");
-
-    // add eventListener to gradientIcons
-    document
-      .querySelectorAll(".gradient_option:not(.add_background)")
-      .forEach((ele) => {
-        ele.addEventListener("click", async (e) => {
-          if (
-            e.target.classList.contains("deleteSvg") ||
-            e.target.parentElement.classList.contains("deleteSvg")
-          )
-            return;
-          const bgId = Number(ele.getAttribute("bgId"));
-
-          // remove id from selected
-          if (selected.includes(bgId)) {
-            selected = selected.filter((ele) => ele !== bgId);
-
-            if (bgId === current) resetCurrent();
-
-            if (selected.length === 0) selected = [0];
-            // add id to selected
-          } else {
-            selected.push(bgId);
-            current = bgId;
-          }
-
-          await setStorageValue({
-            background: { selected, customBackgrounds, currentTab: current },
-          });
-
-          // load just selected background
-          loadBackground(bgId);
-        });
-
-        // add delete eventListener
-        const deleteSvg = ele.querySelector(".deleteSvg");
-        if (deleteSvg)
-          deleteSvg.addEventListener("click", async (e) => {
-            try {
-              await openOverlay("Confirm deletion", "Delete", []);
-              e.preventDefault();
-              const id = Number(ele.getAttribute("bgId"));
-              selected = selected.filter((ele) => ele !== id);
-              customBackgrounds = customBackgrounds.filter(
-                (bg) => bg.id !== id
-              );
-
-              if (id === current) resetCurrent();
-
-              setStorageValue({
-                background: {
-                  selected,
-                  customBackgrounds,
-                  currentTab: current,
-                },
-              });
-            } catch (_) {}
-          });
+    // default gradient
+    if (id < backgroundAmount) {
+      element.classList.add("background" + id);
+    } else {
+      const bg = customBackgrounds.find((bg) => bg.id === id);
+      element.style.background = cssBackgroundPrefix + bg.bg;
+      element.querySelector(".deleteSvg").addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        backgroundHandleDelete(id, element);
       });
+    }
+    backgroundIconsWrapper.insertBefore(element, addBackground);
+  }
 
-    // add eventListener to add button
-    document
-      .querySelector(".gradient_option.add_background")
-      .addEventListener("click", async () => {
-        try {
-          const [bg] = await openOverlay(
-            "Add Background",
-            "Apply",
-            [""],
-            (val) => val[0]
-          );
-          customBackgrounds.push({ bg: bg, id: getNewId() });
-          setStorageValue({
-            background: { selected, customBackgrounds, currentTab: current },
-          });
-        } catch (_) {}
+  // intially mmount all background icons
+  function initBackgroundIcons() {
+    // default background/gradients
+    Array.from({
+      length: backgroundAmount,
+    }).map((_, index) => {
+      createBackgroundIcon(index);
+    });
+
+    // custom (user added) backgrounds
+    customBackgrounds.map((bg) => {
+      createBackgroundIcon(bg.id);
+    });
+
+    addBackground.onclick = backgroundHandleAdd;
+  }
+
+  // handle click event on background icon
+  async function backgroundHandleSelect(id) {
+    if (selected.includes(id)) {
+      selected = selected.filter((ele) => ele !== id);
+
+      if (id === current) resetCurrent();
+
+      if (selected.length === 0) selected = [0];
+      // add id to selected
+    } else {
+      selected.push(id);
+      current = id;
+    }
+
+    await setStorageValue({
+      background: { selected, customBackgrounds, currentTab: current },
+    });
+
+    // load just selected background
+    loadBackground(id);
+  }
+
+  // handle delete event for custom backgrounds
+  async function backgroundHandleDelete(id, element) {
+    try {
+      await openOverlay("Confirm deletion", "Delete", []);
+      selected = selected.filter((ele) => ele !== id);
+      customBackgrounds = customBackgrounds.filter((bg) => bg.id !== id);
+
+      if (id === current) resetCurrent();
+
+      setStorageValue({
+        background: {
+          selected,
+          customBackgrounds,
+          currentTab: current,
+        },
       });
+    } catch (_) {}
+  }
+
+  // handle add event for background icons
+  async function backgroundHandleAdd() {
+    try {
+      const [bg] = await openOverlay(
+        "Add Background",
+        "Apply",
+        [""],
+        (val) => val[0]
+      );
+      const id = getNewId();
+      customBackgrounds.push({ bg, id });
+      setStorageValue({
+        background: { selected, customBackgrounds, currentTab: current },
+      });
+    } catch (_) {}
+  }
+
+  // update background icons to changes made on other new tab
+  // only make updates, don't touch not changed elements
+  function updateBackgroundIcons() {
+    const addedBgs = customBackgrounds.filter(
+      (bg) => !backgroundIconsWrapper.querySelector(`[bgId="${bg.id}"]`)
+    );
+    const removedBgs = [
+      ...backgroundIconsWrapper.querySelectorAll(
+        ".background_option:not(.add_background)"
+      ),
+    ].filter((ele) => {
+      const id = Number(ele.getAttribute("bgId"));
+      return (
+        id >= backgroundAmount && !customBackgrounds.some((bg) => bg.id === id)
+      );
+    });
+
+    const addedSelected = selected.filter(
+      (id) => !backgroundIconsWrapper.querySelector(`[bgId="${id}"].selected`)
+    );
+    const removedSelected = [
+      ...backgroundIconsWrapper.querySelectorAll(`.background_option.selected`),
+    ].filter((ele) => !selected.includes(Number(ele.getAttribute("bgId"))));
+
+    // create newly added bg icons
+    addedBgs.forEach((bg) => createBackgroundIcon(bg.id));
+
+    // remove removed backgrounds
+    removedBgs.forEach((ele) => {
+      ele.remove();
+    });
+
+    // select newly selected backgrounds
+    addedSelected.forEach((id) => {
+      const ele = backgroundIconsWrapper.querySelector(`[bgId="${id}"]`);
+      if (ele) ele.classList.add("selected");
+    });
+
+    // deselect newly deselected backgrounds
+    removedSelected.forEach((ele) => {
+      ele.classList.remove("selected");
+    });
   }
 
   // get an id that is not yet used by another custom background
   function getNewId() {
-    let id = gradientAmount;
+    let id = backgroundAmount;
     while (customBackgrounds.some((bg) => bg.id === id)) {
       id++;
     }
@@ -211,21 +246,25 @@ async function backgroundInit() {
       settings.classList.toggle("open");
   });
 
+  document
+    .getElementById("close_backgrounds")
+    .addEventListener("click", closeSettings);
+
   // add transiton later to prevent element from showing when page loads (only on browser start)
   requestAnimationFrame(() => {
-    document.getElementById("gradient_options_wrapper").style.transition =
+    document.getElementById("background_options_wrapper").style.transition =
       "opacity .25s ease-in-out";
   });
 
   loadBackground();
-  updateGradientIcons();
+  initBackgroundIcons();
 
   // global change listener
   changeListener.push((changes) => {
     if (changes.background !== undefined) {
       ({ customBackgrounds, selected } = changes.background.newValue);
       loadBackground();
-      updateGradientIcons();
+      updateBackgroundIcons();
     }
   });
 }

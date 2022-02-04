@@ -55,14 +55,14 @@ async function loadPage() {
 
   loadMultipleChoiceInputs();
 
-  // set correct gradient
+  // set correct background
   const { background } = await getStorageValue(["background"]);
   const header = document.querySelector(".header");
-  if (background.currentTab >= gradientAmount) {
+  if (background.currentTab >= backgroundAmount) {
     header.style.background = background.customBackgrounds.find(
       (bg) => bg.id === background.currentTab
     ).bg;
-  } else header.classList.add("gradient" + background.currentTab);
+  } else header.classList.add("background" + background.currentTab);
 }
 
 function loadCheckboxInputs() {

@@ -33,7 +33,7 @@ const multiple_choices = {
   ],
 };
 
-const gradientAmount = 36;
+const backgroundAmount = 36;
 
 // returns promise to get async storage data^
 async function getStorageValue(values = null) {

@@ -351,7 +351,7 @@ body
         path
             pointer-events: none
     
-    #gradient_options_wrapper
+    #background_options_wrapper
         --size: 8vw
         top: 0
         left: 0
@@ -366,7 +366,26 @@ body
         align-items: center
         // transition is added via js to prevent transition to show element when page loads
         // transition: opacity .25s ease-in-out
-        #gradient_options
+        #close_backgrounds
+            position: absolute
+            top: 2rem
+            right: 2rem
+            height: 3rem
+            width: 3rem
+            outline: none
+            border: none
+            margin: 0
+            padding: 0
+            border-radius: 50%
+            background: transparent
+            z-index: 1
+            cursor: pointer
+            transition: background-color .25s ease-in-out
+            svg
+                fill: var(--text)
+            &:hover
+                background-color: var(--text-transparent)
+        #background_options
             display: flex
             flex-wrap: wrap
             align-items: flex-start
@@ -376,26 +395,26 @@ body
             overflow-y: auto
             margin: 0 auto
 
-    &:not(.open) #gradient_options_wrapper
+    &:not(.open) #background_options_wrapper
         opacity: 0
         pointer-events: none
 
     &.open
         position: fixed
         z-index: 10
-        #gradient_options_wrapper
+        #background_options_wrapper
             opacity: 1
 
-    .gradient_option_filler
+    .background_option_filler
         width: calc(var(--size) * 6 / 5)
         height: 0
 
-    .gradient_option
+    .background_option
         position: relative
         cursor: pointer
         border: .15vmin solid var(--text)
         border-radius: 50%
-        background: var(--gradient)
+        background: var(--background)
         transition: transform .25s ease-in-out
         
         width: var(--size)
