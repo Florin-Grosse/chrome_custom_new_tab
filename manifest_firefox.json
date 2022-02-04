@@ -21,7 +21,7 @@
       "strict_min_version": "42.0"
     }
   },
-  "permissions": ["storage", "contextMenus"],
+  "permissions": ["storage", "contextMenus", "activeTab"],
   "icons": {
     "1080": "resources/icons/icon.png",
     "16": "resources/icons/icon_16.png",
