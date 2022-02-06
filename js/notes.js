@@ -60,9 +60,18 @@ async function notepadInit() {
     });
 
     addNoteButton.addEventListener("click", () => {
-      const id = getNewId();
-      notes.push({ id, note: "" });
-      setStorageValue({ notes });
+      const emptyNote = notes.find((note) => note.note === "");
+      if (emptyNote) {
+        // if an empty note exists, focus empty note instead of creating new one
+        wrapper
+          .querySelector(`.note[noteid="${emptyNote.id}"]`)
+          .querySelector("textarea")
+          .focus();
+      } else {
+        const id = getNewId();
+        notes.push({ id, note: "" });
+        setStorageValue({ notes });
+      }
     });
 
     window.addEventListener("beforeunload", () => setStorageValue({ notes }));
@@ -145,6 +154,8 @@ async function notepadInit() {
     textarea.addEventListener("keydown", (e) => {
       if (e.key !== "Enter") return;
       if (e.ctrlKey) {
+        // don't make new note if current is empty and would be deleted
+        if (textarea.value === "") return;
         const id = getNewId();
         notes.push({ id, note: "" });
         addNote(id, "", true);
