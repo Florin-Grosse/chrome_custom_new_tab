@@ -45,16 +45,18 @@ function overlayInit() {
     header.innerHTML = headerText;
     button.innerHTML = buttonText;
     wrapper.innerHTML = "";
-    wrapper.innerHTML = inputs
-      .map(
-        (input) =>
-          `<span>${input.name || input}</span><input ${
-            input.value ? `value="${input.value}"` : ""
-          } />`
-      )
-      .join("");
+    inputs.forEach((input) => {
+      const span = document.createElement("span");
+      span.innerText = input.name || input;
+      const inputEle = document.createElement("input");
+      if (input.value) inputEle.value = input.value;
+      wrapper.append(span);
+      wrapper.append(inputEle);
+    });
+
     if (inputs.length > 0)
       requestAnimationFrame(() => wrapper.querySelector("input").focus());
+
     return new Promise((resolve, reject) => {
       confirmFunction = () => {
         const values = [...wrapper.querySelectorAll("input")].map(
