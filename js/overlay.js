@@ -39,7 +39,8 @@ function overlayInit() {
     headerText,
     buttonText,
     inputs = [],
-    checkFct = () => true
+    checkFct = () => true,
+    customNodes = []
   ) {
     html.classList.add("overlay");
     header.innerHTML = headerText;
@@ -53,6 +54,8 @@ function overlayInit() {
       wrapper.append(span);
       wrapper.append(inputEle);
     });
+
+    customNodes.forEach((node) => wrapper.append(node));
 
     if (inputs.length > 0)
       requestAnimationFrame(() => wrapper.querySelector("input").focus());
