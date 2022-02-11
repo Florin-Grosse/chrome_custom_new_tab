@@ -139,7 +139,8 @@ async function clockInit() {
     }
     if (changes.clockFormat !== undefined) {
       clockFormat = changes.clockFormat.newValue;
-      loadCLock();
+      clock.querySelector(".ampm").textContent = "";
+      loadClock();
     }
     if (changes.language !== undefined) {
       language = changes.language.newValue;
