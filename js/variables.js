@@ -49,10 +49,12 @@ const languages = {
       websiteAdd: {
         title: "Add website",
         confirm: "Add",
+        inputNames: ["URL", "Icon", "Small Icon"],
       },
       websiteEdit: {
         title: "Edit website",
         confirm: "Confirm",
+        inputNames: ["URL", "Icon", "Small Icon"],
       },
     },
     paths: {
@@ -96,10 +98,12 @@ const languages = {
       websiteAdd: {
         title: "Webseite hinzufügen",
         confirm: "Hinzufügen",
+        inputNames: ["URL", "Icon", "Kleines Icon"],
       },
       websiteEdit: {
         title: "Webseite bearbeiten",
         confirm: "Speichern",
+        inputNames: ["URL", "Icon", "Kleines Icon"],
       },
     },
     paths: {

@@ -1,8 +1,9 @@
 async function backgroundInit() {
   const cssBackgroundPrefix = "center center / cover ";
-  let { customBackgrounds, selected } = {
+  let { customBackgrounds, selected, language } = {
     customBackgrounds: [],
     selected: [0],
+    language: "en",
   };
   // get values from chrome storage or init values
   try {
@@ -13,6 +14,15 @@ async function backgroundInit() {
     setStorageValue({
       background: { customBackgrounds: [], selected: [0], currentTab: 0 },
     });
+  }
+
+  try {
+    language = (await getStorageValue(["language"])).language;
+  } catch (err) {
+    setStorageValue({
+      language: "en",
+    });
+    language = "en";
   }
 
   // randomly selected background from all selected
@@ -130,7 +140,8 @@ async function backgroundInit() {
   // handle delete event for custom backgrounds
   async function backgroundHandleDelete(id, element) {
     try {
-      await openOverlay("Confirm deletion", "Delete", []);
+      const overlayText = languages[language].overlays.backgroundConfirmDelete;
+      await openOverlay(overlayText.title, overlayText.confirm, []);
       selected = selected.filter((ele) => ele !== id);
       customBackgrounds = customBackgrounds.filter((bg) => bg.id !== id);
 
@@ -149,9 +160,10 @@ async function backgroundInit() {
   // handle add event for background icons
   async function backgroundHandleAdd() {
     try {
+      const overlayText = languages[language].overlays.backgroundAdd;
       const [bg] = await openOverlay(
-        "Add Background",
-        "Apply",
+        overlayText.title,
+        overlayText.confirm,
         [""],
         (val) => val[0]
       );

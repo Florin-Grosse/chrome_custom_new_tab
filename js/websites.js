@@ -1,5 +1,5 @@
 async function websitesInit() {
-  let { websites } = await getStorageValue(["websites"]);
+  let { websites, language } = await getStorageValue(["websites", "language"]);
 
   if (websites === undefined) {
     setStorageValue({
@@ -23,6 +23,10 @@ async function websitesInit() {
       ],
     });
     websites = [];
+  }
+
+  if (language === undefined) {
+    setStorageValue({ language: "en" });
   }
 
   let canDrag = false;
@@ -91,10 +95,11 @@ async function websitesInit() {
       .getElementById("add_website")
       .addEventListener("click", async () => {
         try {
+          const overlayText = languages[language].overlays.websiteAdd;
           const [url, icon, smallIcon] = await openOverlay(
-            "Add website",
-            "Add",
-            ["URL", "Icon", "Small Icon"],
+            overlayText.title,
+            overlayText.title,
+            overlayText.inputNames,
             (values) => values[0]
           );
           addWebsite(url, icon, smallIcon);
@@ -293,13 +298,20 @@ async function websitesInit() {
       .getElementById("edit_website")
       .addEventListener("click", async () => {
         try {
+          const overlayText = languages[language].overlays.websiteEdit;
           const [url, icon, smallIcon] = await openOverlay(
-            "Edit website",
-            "Confirm",
+            overlayText.title,
+            overlayText.confirm,
             [
-              { name: "URL", value: websites[index].url },
-              { name: "Icon", value: websites[index].icon || "" },
-              { name: "Small Icon", value: websites[index].small_icon || "" },
+              { name: overlayText.inputNames[0], value: websites[index].url },
+              {
+                name: overlayText.inputNames[1],
+                value: websites[index].icon || "",
+              },
+              {
+                name: overlayText.inputNames[2],
+                value: websites[index].small_icon || "",
+              },
             ],
             (values) => values[0]
           );
