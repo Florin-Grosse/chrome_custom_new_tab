@@ -305,6 +305,9 @@ body
         text-align: center
         &.clock_time
             font-family: Roboto-mono
+    &:not(.seconds)
+        p:nth-child(6), p:nth-child(7), p:nth-child(8)
+            display: none
 
 #date
     font-size: 2.5rem
@@ -312,7 +315,7 @@ body
 
 /*--- Notpad ---*/
 #notepad
-    width: 20vw
+    width: calc(100% - 5vw)
     flex-grow: 1
     display: flex
     flex-direction: column

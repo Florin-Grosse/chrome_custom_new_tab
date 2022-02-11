@@ -24,10 +24,10 @@ async function clockInit() {
   function loadDate() {
     if (showDate) {
       date.style.display = "";
-      date.innerHTML =
-        ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"][new Date().getDay()] +
+      date.textContent =
+        ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"][new Date().getDay()] +
         ", " +
-        new Date().toLocaleDateString("de");
+        stringifyDate(new Date());
     } else date.style.display = "none";
     updateVisibility();
   }
@@ -35,35 +35,20 @@ async function clockInit() {
   const clock = document.getElementById("clock");
   let clockInterval;
   function loadClock() {
+    clock.classList.toggle("seconds", showSeconds);
     const hours = new Date().getHours();
     const minutes = new Date().getMinutes();
     const seconds = new Date().getSeconds();
-    clock.innerHTML =
-      '<p class="clock_time">' +
-      hours
-        .toString()
-        .replace("0", "O")
-        .padStart(2, "O")
-        .split("")
-        .join('</p><p class="clock_time">') +
-      '</p><p>:</p><p class="clock_time">' +
-      minutes
-        .toString()
-        .replace("0", "O")
-        .padStart(2, "O")
-        .split("")
-        .join('</p><p class="clock_time">') +
-      "</p>" +
+    const digitElements = clock.querySelectorAll(".clock_time");
+    const time =
+      hours.toString().replace("0", "O").padStart(2, "O") +
+      minutes.toString().replace("0", "O").padStart(2, "O") +
       (showSeconds
-        ? '<p>:</p><p class="clock_time">' +
-          seconds
-            .toString()
-            .replace("0", "O")
-            .padStart(2, "O")
-            .split("")
-            .join('</p><p class="clock_time">')
-        : "") +
-      "</p>";
+        ? seconds.toString().replace("0", "O").padStart(2, "O")
+        : "");
+    for (let i = 0; i < time.length; i++) {
+      digitElements[i].textContent = time[i];
+    }
     loadDate();
   }
 
@@ -77,6 +62,13 @@ async function clockInit() {
   function updateVisibility() {
     if (!showTime && !showDate) timeWrapper.style.display = "none";
     else timeWrapper.style.display = null;
+  }
+
+  function stringifyDate(date) {
+    return `${date.getDay().toString().padStart(2, "0")}.${date
+      .getMonth()
+      .toString()
+      .padStart(2, "0")}.${date.getFullYear().toString().slice(-2)}`;
   }
 
   loadDate();
