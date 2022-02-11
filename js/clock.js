@@ -1,9 +1,13 @@
 async function clockInit() {
-  let { showSeconds, showDate, showTime } = await getStorageValue([
-    "showSeconds",
-    "showDate",
-    "showTime",
-  ]);
+  let { showSeconds, showDate, showTime, dateFormat, language, clockFormat } =
+    await getStorageValue([
+      "showSeconds",
+      "showDate",
+      "showTime",
+      "dateFormat",
+      "language",
+      "clockFormat",
+    ]);
 
   if (showSeconds === undefined) {
     setStorageValue({ showSeconds: false });
@@ -20,12 +24,27 @@ async function clockInit() {
     showTime = true;
   }
 
+  if (dateFormat === undefined) {
+    setStorageValue({ dateFormat: "default" });
+    dateFormat = "default";
+  }
+
+  if (clockFormat === undefined) {
+    setStorageValue({ clockFormat: "am/pm" });
+    clockFormat = "12h";
+  }
+
+  if (language === undefined) {
+    setStorageValue({ language: "en" });
+    language = "en";
+  }
+
   const date = document.getElementById("date");
   function loadDate() {
     if (showDate) {
       date.style.display = "";
       date.textContent =
-        ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"][new Date().getDay()] +
+        languages[language].weekdays[new Date().getDay()] +
         ", " +
         stringifyDate(new Date());
     } else date.style.display = "none";
@@ -36,16 +55,30 @@ async function clockInit() {
   let clockInterval;
   function loadClock() {
     clock.classList.toggle("seconds", showSeconds);
-    const hours = new Date().getHours();
-    const minutes = new Date().getMinutes();
-    const seconds = new Date().getSeconds();
+    const now = new Date();
+    let hours = now.getHours().toString().replace("0", "O").padStart(2, "O");
+    const minutes = now
+      .getMinutes()
+      .toString()
+      .replace("0", "O")
+      .padStart(2, "O");
+    const seconds = now
+      .getSeconds()
+      .toString()
+      .replace("0", "O")
+      .padStart(2, "O");
     const digitElements = clock.querySelectorAll(".clock_time");
-    const time =
-      hours.toString().replace("0", "O").padStart(2, "O") +
-      minutes.toString().replace("0", "O").padStart(2, "O") +
-      (showSeconds
-        ? seconds.toString().replace("0", "O").padStart(2, "O")
-        : "");
+
+    if (clockFormat === "am/pm") {
+      const ampmEle = clock.querySelector(".ampm");
+      const am = now.getHours() > 0 && now.getHours() < 13;
+      hours = (now.getHours() + 24 - (am ? 0 : 12)) % 24;
+      hours = hours.toString().replace("0", "O").padStart(2, " ");
+
+      ampmEle.textContent = am ? "am" : "pm";
+    }
+    const time = hours + minutes + (showSeconds ? seconds : "");
+
     for (let i = 0; i < time.length; i++) {
       digitElements[i].textContent = time[i];
     }
@@ -65,10 +98,14 @@ async function clockInit() {
   }
 
   function stringifyDate(date) {
-    return `${date.getDay().toString().padStart(2, "0")}.${date
-      .getMonth()
-      .toString()
-      .padStart(2, "0")}.${date.getFullYear().toString().slice(-2)}`;
+    const day = date.getDay().toString().padStart(2, "0");
+    const month = date.getMonth().toString().padStart(2, "0");
+    const year = date.getFullYear().toString().slice(-2);
+    let format = dateFormats[dateFormat];
+    format = format.replace("dd", day);
+    format = format.replace("mm", month);
+    format = format.replace("yy", year);
+    return format;
   }
 
   loadDate();
@@ -95,6 +132,18 @@ async function clockInit() {
       clockInterval = showTime
         ? setInterval(loadClock, showSeconds ? 200 : 5000)
         : undefined;
+    }
+    if (changes.dateFormat !== undefined) {
+      dateFormat = changes.dateFormat.newValue;
+      loadDate();
+    }
+    if (changes.clockFormat !== undefined) {
+      clockFormat = changes.clockFormat.newValue;
+      loadCLock();
+    }
+    if (changes.language !== undefined) {
+      language = changes.language.newValue;
+      loadDate();
     }
   });
 }

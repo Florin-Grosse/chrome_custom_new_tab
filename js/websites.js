@@ -92,7 +92,7 @@ async function websitesInit() {
       .addEventListener("click", async () => {
         try {
           const [url, icon, smallIcon] = await openOverlay(
-            "Add Website",
+            "Add website",
             "Add",
             ["URL", "Icon", "Small Icon"],
             (values) => values[0]
@@ -294,7 +294,7 @@ async function websitesInit() {
       .addEventListener("click", async () => {
         try {
           const [url, icon, smallIcon] = await openOverlay(
-            "Edit Website",
+            "Edit website",
             "Confirm",
             [
               { name: "URL", value: websites[index].url },

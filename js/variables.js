@@ -33,6 +33,110 @@ const multiple_choices = {
   ],
 };
 
+const languages = {
+  en: {
+    name: "English",
+    weekdays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+    overlays: {
+      backgroundConfirmDelete: {
+        title: "Confirm deletion",
+        confirm: "Delete",
+      },
+      backgroundAdd: {
+        title: "Add background",
+        confirm: "Apply",
+      },
+      websiteAdd: {
+        title: "Add website",
+        confirm: "Add",
+      },
+      websiteEdit: {
+        title: "Edit website",
+        confirm: "Confirm",
+      },
+    },
+    paths: {
+      // context menu
+      "#open_website": {
+        text: "Open in new tab",
+      },
+      "#toggle_drag": {
+        text: "Toggle dragging",
+      },
+      "#edit_website": {
+        text: "Edit website",
+      },
+      ".remove_website": {
+        text: "Remove website",
+      },
+      // input placeholders
+      "#search_bar": {
+        placeholder: "Search",
+      },
+      ".note>input": {
+        placeholder: "Title",
+      },
+      ".note>textarea": {
+        placeholder: "Note",
+      },
+    },
+  },
+  de: {
+    name: "Deutsch",
+    weekdays: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+    overlays: {
+      backgroundConfirmDelete: {
+        title: "Löschen bestätigen",
+        confirm: "Löschen",
+      },
+      backgroundAdd: {
+        title: "Hintergrund hinzufügen",
+        confirm: "Anwenden",
+      },
+      websiteAdd: {
+        title: "Webseite hinzufügen",
+        confirm: "Hinzufügen",
+      },
+      websiteEdit: {
+        title: "Webseite bearbeiten",
+        confirm: "Speichern",
+      },
+    },
+    paths: {
+      // context menu
+      "#open_website": {
+        text: "In neuem Tab öffnen",
+      },
+      "#toggle_drag": {
+        text: "Verschieben aktivieren/deaktivieren",
+      },
+      "#edit_website": {
+        text: "Webseite bearbeiten",
+      },
+      ".remove_website": {
+        text: "Webseite entfernen",
+      },
+      // input placeholders
+      "#search_bar": {
+        placeholder: "Suchen",
+      },
+      ".note>input": {
+        placeholder: "Titel",
+      },
+      ".note>textarea": {
+        placeholder: "Notiz",
+      },
+    },
+  },
+};
+
+const dateFormats = {
+  default: "dd.mm.yy",
+  defaultSlash: "dd/mm/yy",
+  americanDot: "mm.dd.yy",
+  americanSlash: "mm/dd/yy",
+};
+
 const backgroundAmount = 36;
 
 // returns promise to get async storage data^
