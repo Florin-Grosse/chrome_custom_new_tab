@@ -7,6 +7,7 @@ async function notepadInit() {
     setStorageValue({
       notes: [
         {
+          title: "",
           note: "",
           id: 1,
         },
@@ -15,6 +16,7 @@ async function notepadInit() {
     });
     notes = [
       {
+        title: "",
         note: "",
         id: 1,
       },
@@ -60,16 +62,16 @@ async function notepadInit() {
     });
 
     addNoteButton.addEventListener("click", () => {
-      const emptyNote = notes.find((note) => note.note === "");
+      const emptyNote = notes.find((note) => !note.note && !note.title);
       if (emptyNote) {
-        // if an empty note exists, focus empty note instead of creating new one
+        // if an empty note exists, focus title of empty note instead of creating new one
         wrapper
           .querySelector(`.note[noteid="${emptyNote.id}"]`)
-          .querySelector("textarea")
+          .querySelector("input")
           .focus();
       } else {
         const id = getNewId();
-        notes.push({ id, note: "" });
+        notes.push({ id, note: "", title: "" });
         setStorageValue({ notes });
       }
     });
@@ -83,19 +85,25 @@ async function notepadInit() {
       (ele) => ({
         id: getId(ele),
         textarea: ele.querySelector("textarea"),
+        input: ele.querySelector("input"),
         ele,
       })
     );
 
     // update existing and add new
-    notes.forEach(({ note, id }) => {
+    notes.forEach(({ note, title, id }) => {
       const current = mounted.find((ele) => ele.id === id);
       // update current textfield
       if (current) {
         // don't update focused to not mess up cursor position and tabbing out blurs and sets focused to -1
-        if (current.textarea.value !== note && id !== focused) {
+        if (
+          (current.textarea.value !== note || current.input.value !== title) &&
+          id !== focused
+        ) {
           current.textarea.value = note;
           resizeTextarea(current.textarea);
+
+          current.input.value = title;
         }
         // add new notes
       } else addNote(id, note);
@@ -127,18 +135,21 @@ async function notepadInit() {
   }
 
   // adds a note DOM element with eventlisteners
-  function addNote(id, note = "", autofocus = false) {
+  function addNote(id, note = "", title = "", autofocus = false) {
     const element = noteTemplate.content.cloneNode(true).children[0];
     const textarea = element.querySelector("textarea");
+    const input = element.querySelector("input");
     element.setAttribute("noteid", id);
     textarea.addEventListener("focus", () => {
       enter = false;
       focused = getId(element);
     });
-    textarea.addEventListener("blur", () => {
+    textarea.addEventListener("blur", (e) => {
       enter = false;
+      // switch from note textarea to title input
+      if (e.relatedTarget === input) return;
       focused = -1;
-      if (textarea.value === "" && notes.length > 1) {
+      if (textarea.value === "" && input.value === "" && notes.length > 1) {
         deleteNote(getId(element));
       }
     });
@@ -157,8 +168,8 @@ async function notepadInit() {
         // don't make new note if current is empty and would be deleted
         if (textarea.value === "") return;
         const id = getNewId();
-        notes.push({ id, note: "" });
-        addNote(id, "", true);
+        notes.push({ id, note: "", title: "" });
+        addNote(id, "", "", true);
         setStorageValue({ notes });
         return;
       }
@@ -206,9 +217,35 @@ async function notepadInit() {
         });
       }
     });
+    // changed focused when focusing / bluring title of note
+    input.addEventListener("focus", () => {
+      focused = getId(element);
+    });
+    input.addEventListener("blur", (e) => {
+      // switch from title input to note textarea
+      if (e.relatedTarget === textarea) return;
+      focused = -1;
+      if (textarea.value === "" && input.value === "" && notes.length > 1) {
+        deleteNote(getId(element));
+      }
+    });
+    // focus textarea on title enter keypress
+    input.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter") return;
+      e.preventDefault();
+      textarea.focus();
+    });
+    // update title storage value
+    input.addEventListener("input", () => {
+      const eleId = getId(element);
+      notes.find(({ id }) => id == eleId).title = input.value;
+      setStorageNotes();
+    });
 
     const existingNote = notes.find((note) => note.id === id);
     textarea.value = note || existingNote ? existingNote.note : "";
+    // title can be undefined since it was added with version 1.3.4
+    input.value = title || existingNote ? existingNote.title || "" : "";
     textarea.style.height = "0";
     requestAnimationFrame(() => {
       textarea.style.height = textarea.scrollHeight + "px";
@@ -218,7 +255,7 @@ async function notepadInit() {
 
     if (autofocus)
       requestAnimationFrame(() => {
-        textarea.focus();
+        input.focus();
       });
   }
 

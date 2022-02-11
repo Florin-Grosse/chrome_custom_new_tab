@@ -12,8 +12,8 @@
   "--notepade": "deprecated",
   "notepad": "content of notepad",
   "notes": [
-    { "id": 1, "note": "note1" },
-    { "id": 2, "note": "note2" }
+    { "id": 1, "note": "note1", "title": "Titel 1" },
+    { "id": 2, "note": "note2", "title": "Titel 2" }
   ],
   "searchEngine": "duck | ecosia | google | qwant | null",
   "showDate": true,

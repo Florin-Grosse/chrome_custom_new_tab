@@ -320,6 +320,21 @@ body
     .note
         width: 100%
         margin: .5rem
+        background: var(--bg-transparent)
+        transition: box-shadow .25s ease-in-out
+        border-radius: var(--border-radius)
+        &:focus, &:hover
+            box-shadow: rgba(0, 0, 0, 0.3) 1px 1px 6px 2px
+
+    input
+        width: 100%
+        background: transparent
+        outline: none
+        border: 0
+        font-size: 1.4em
+        padding:
+            top: calc(var(--border-radius) * 1.5)
+            left: calc(var(--border-radius) * 1.5)
 
     textarea
         resize: none
@@ -331,11 +346,7 @@ body
         color: var(--text)
         padding: calc(var(--border-radius) * 1.5)
         line-height: 1.25rem
-        background: var(--bg-transparent)
-        transition: box-shadow .25s ease-in-out
-        border-radius: var(--border-radius)
-        &:focus, &:hover
-            box-shadow: rgba(0, 0, 0, 0.3) 1px 1px 6px 2px
+        background: transparent
 
     @media (orientation: landscape)
         margin-left: 5vw
@@ -353,11 +364,6 @@ body
         outline: none
         border: none
         cursor: pointer
-        border-radius: var(--border-radius)
-        background: var(--bg-transparent)
-        transition: box-shadow .25s ease-in-out
-        &:hover
-            box-shadow: rgba(0, 0, 0, 0.3) 1px 1px 6px 2px
         svg
             height: 2rem
 
