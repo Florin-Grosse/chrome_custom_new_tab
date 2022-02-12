@@ -166,7 +166,7 @@ async function notepadInit() {
       if (e.key !== "Enter") return;
       if (e.ctrlKey) {
         // don't make new note if current is empty and would be deleted
-        if (textarea.value === "") return;
+        if (textarea.value === "" && input.value === "") return;
         const id = getNewId();
         notes.push({ id, note: "", title: "" });
         addNote(id, "", "", true);
