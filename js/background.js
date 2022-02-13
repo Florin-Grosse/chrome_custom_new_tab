@@ -1,29 +1,9 @@
 async function backgroundInit() {
   const cssBackgroundPrefix = "center center / cover ";
-  let { customBackgrounds, selected, language } = {
-    customBackgrounds: [],
-    selected: [0],
-    language: "en",
-  };
-  // get values from chrome storage or init values
-  try {
-    ({ customBackgrounds, selected } = (
-      await getStorageValue(["background"])
-    ).background);
-  } catch (err) {
-    setStorageValue({
-      background: { customBackgrounds: [], selected: [0], currentTab: 0 },
-    });
-  }
-
-  try {
-    language = (await getStorageValue(["language"])).language;
-  } catch (err) {
-    setStorageValue({
-      language: "en",
-    });
-    language = "en";
-  }
+  let {
+    background: { customBackgrounds, selected },
+    language,
+  } = await getStorageValue(["background", "language"]);
 
   // randomly selected background from all selected
   let current = 0;

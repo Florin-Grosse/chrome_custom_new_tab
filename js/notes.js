@@ -3,27 +3,6 @@ const listStartString = "- ";
 async function notepadInit() {
   let { notes, showNotes } = await getStorageValue(["notes", "showNotes"]);
 
-  if (notes === undefined) {
-    setStorageValue({
-      notes: [
-        {
-          title: "",
-          note: "",
-          id: 1,
-        },
-      ],
-      showNotes: true,
-    });
-    notes = [
-      {
-        title: "",
-        note: "",
-        id: 1,
-      },
-    ];
-    showNotes = true;
-  }
-
   const noteTemplate = document.getElementById("note_template");
   const wrapper = document.getElementById("notepad");
   const addNoteButton = document.getElementById("add_note");

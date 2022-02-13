@@ -9,36 +9,6 @@ async function clockInit() {
       "clockFormat",
     ]);
 
-  if (showSeconds === undefined) {
-    setStorageValue({ showSeconds: false });
-    showSeconds = false;
-  }
-
-  if (showDate === undefined) {
-    setStorageValue({ showDate: true });
-    showDate = false;
-  }
-
-  if (showTime === undefined) {
-    setStorageValue({ showTime: true });
-    showTime = true;
-  }
-
-  if (dateFormat === undefined) {
-    setStorageValue({ dateFormat: "default" });
-    dateFormat = "default";
-  }
-
-  if (clockFormat === undefined) {
-    setStorageValue({ clockFormat: "am/pm" });
-    clockFormat = "12h";
-  }
-
-  if (language === undefined) {
-    setStorageValue({ language: "en" });
-    language = "en";
-  }
-
   const date = document.getElementById("date");
   function loadDate() {
     if (showDate) {

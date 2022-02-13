@@ -1,34 +1,6 @@
 async function websitesInit() {
   let { websites, language } = await getStorageValue(["websites", "language"]);
 
-  if (websites === undefined) {
-    setStorageValue({
-      websites: [
-        {
-          url: "https://www.youtube.de",
-          icon: "https://s.ytimg.com/yts/img/favicon_144-vfliLAfaB.png",
-        },
-        {
-          url: "https://www.docs.google.com/document/u/0/",
-          icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico",
-        },
-        {
-          url: "https://calendar.google.com/calendar/b/0/r",
-          icon: "https://calendar.google.com/googlecalendar/images/favicon_v2018_256.png",
-        },
-        {
-          url: "https://www.amazon.de",
-          icon: "https://www.amazon.de/favicon.ico",
-        },
-      ],
-    });
-    websites = [];
-  }
-
-  if (language === undefined) {
-    setStorageValue({ language: "en" });
-  }
-
   let canDrag = false;
 
   const websites_wrapper = document.getElementById("website_icon_wrapper");

@@ -1,11 +1,6 @@
 async function languageInit() {
   let { language } = await getStorageValue(["language"]);
 
-  if (language === undefined) {
-    setStorageValue({ language: "en" });
-    language = "en";
-  }
-
   Object.entries(languages[language].paths).forEach(
     ([path, { text, ...rest }]) => {
       document.querySelectorAll(path).forEach((ele) => {

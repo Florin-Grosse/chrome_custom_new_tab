@@ -1,11 +1,6 @@
 async function searchInit() {
   let { searchEngine } = await getStorageValue(["searchEngine"]);
 
-  if (searchEngine === undefined) {
-    setStorageValue({ searchEngine: "duck" });
-    searchEngine = "duck";
-  }
-
   const search_bar = document.getElementById("search_bar_form");
   function loadSearchEngine() {
     if (searchEngine !== "none") {

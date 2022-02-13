@@ -1,38 +1,3 @@
-const multiple_choices = {
-  search_engine: [
-    {
-      name: "None",
-      id: "none",
-      url: "",
-    },
-    {
-      name: "DuckDuckGo",
-      id: "duck",
-      url: "https://duckduckgo.com",
-    },
-    {
-      name: "Ecosia",
-      id: "ecosia",
-      url: "https://ecosia.org/search",
-    },
-    {
-      name: "Google",
-      id: "google",
-      url: "https://google.com/search",
-    },
-    {
-      name: "Startpage",
-      id: "startpage",
-      url: "https://startpage.com/search",
-    },
-    {
-      name: "Qwant",
-      id: "quant",
-      url: "https://qwant.com",
-    },
-  ],
-};
-
 const languages = {
   en: {
     name: "English",
@@ -141,12 +106,104 @@ const dateFormats = {
   americanSlash: "mm/dd/yy",
 };
 
+const multiple_choices = {
+  search_engine: [
+    {
+      name: "None",
+      id: "none",
+      url: "",
+    },
+    {
+      name: "DuckDuckGo",
+      id: "duck",
+      url: "https://duckduckgo.com",
+    },
+    {
+      name: "Ecosia",
+      id: "ecosia",
+      url: "https://ecosia.org/search",
+    },
+    {
+      name: "Google",
+      id: "google",
+      url: "https://google.com/search",
+    },
+    {
+      name: "Startpage",
+      id: "startpage",
+      url: "https://startpage.com/search",
+    },
+    {
+      name: "Qwant",
+      id: "quant",
+      url: "https://qwant.com",
+    },
+  ],
+  languages: Object.entries(languages).map(([id, lang]) => ({ id, ...lang })),
+  dateFormats: Object.entries(dateFormats).map(([id, name]) => ({ id, name })),
+};
+
 const backgroundAmount = 36;
 
-// returns promise to get async storage data^
+const defaultStorageValues = {
+  background: {
+    currentTab: 0,
+    customBackgrounds: [],
+    selected: [0],
+  },
+  clockFormat: "12h",
+  darkModeFont: true,
+  dateFormat: "default",
+  language: "en",
+  notes: [{ title: "", note: "" }],
+  searchEngine: "duck",
+  showDate: true,
+  showNotes: true,
+  showSeconds: true,
+  showTIme: true,
+  websites: [
+    {
+      url: "https://www.youtube.de",
+      icon: "https://s.ytimg.com/yts/img/favicon_144-vfliLAfaB.png",
+    },
+    {
+      url: "https://www.docs.google.com/document/u/0/",
+      icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico",
+    },
+    {
+      url: "https://calendar.google.com/calendar/b/0/r",
+      icon: "https://calendar.google.com/googlecalendar/images/favicon_v2018_256.png",
+    },
+    {
+      url: "https://www.amazon.de",
+      icon: "https://www.amazon.de/favicon.ico",
+    },
+  ],
+};
+
+// returns promise to get async storage data
+// initializes data if value is not defined yet
 async function getStorageValue(values = null) {
   return new Promise(function (resolve, reject) {
-    chrome.storage.sync.get(values, function (options) {
+    chrome.storage.sync.get(values, async function (options) {
+      if (Array.isArray(values)) {
+        await Promise.all(
+          values
+            .map((key) => {
+              if (options[key] === undefined) {
+                options[key] = defaultStorageValues[key];
+                return setStorageValue({ [key]: options[key] });
+              }
+              return null;
+            })
+            .filter(Boolean)
+        );
+      } else if (typeof values === "string") {
+        if (options[values] === undefined) {
+          options[values] = defaultStorageValues[values];
+          await setStorageValue({ [values]: options[values] });
+        }
+      }
       resolve(options);
     });
   });

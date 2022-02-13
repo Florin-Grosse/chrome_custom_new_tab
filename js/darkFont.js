@@ -1,11 +1,6 @@
 async function fontInit() {
   let { darkModeFont } = await getStorageValue(["darkModeFont"]);
 
-  if (darkModeFont === undefined) {
-    setStorageValue({ darkModeFont: true });
-    darkModeFont = true;
-  }
-
   const html = document.firstElementChild;
   function loadDarkModeFont() {
     if (darkModeFont) html.classList.remove("darkFont");

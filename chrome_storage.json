@@ -12,7 +12,7 @@
   "clockFormat": "12h",
   "darkModeFont": true,
   "--dateFormat": "id of dateformat as in dateFormat array in variables.js",
-  "dateFormat": "defaultDot",
+  "dateFormat": "default",
   "--language": "language id as in languages array in variables.js",
   "language": "de",
   "--notepad": "deprecated",
