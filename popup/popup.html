@@ -8,104 +8,121 @@
   <body>
     <div class="header"></div>
     <div class="settings">
+      <template id="checkbox_template">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="svg_checkbox"
+        >
+          <path
+            class="svg_checkbox_false"
+            d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm1-16H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+          />
+          <path
+            class="svg_checkbox_true"
+            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8.29 13.29c-.39.39-1.02.39-1.41 0L5.71 12.7c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L10 14.17l6.88-6.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-7.58 7.59z"
+          />
+        </svg>
+        <span>Show notepad</span>
+      </template>
+      <template id="multiple_choice_item_template">
+        <div class="checkbox_input">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            class="svg_checkbox"
+          >
+            <path
+              class="svg_checkbox_false"
+              d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm1-16H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+            />
+            <path
+              class="svg_checkbox_true"
+              d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8.29 13.29c-.39.39-1.02.39-1.41 0L5.71 12.7c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L10 14.17l6.88-6.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-7.58 7.59z"
+            /></svg
+          ><span></span>
+        </div>
+      </template>
       <div class="page page0 active initial_load">
         <h2 class="page_header">General</h2>
-        <div class="checkbox_input" data-id="showNotes" data-default="true">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            class="svg_checkbox"
-          >
-            <path
-              class="svg_checkbox_false"
-              d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm1-16H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-            />
-            <path
-              class="svg_checkbox_true"
-              d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8.29 13.29c-.39.39-1.02.39-1.41 0L5.71 12.7c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L10 14.17l6.88-6.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-7.58 7.59z"
-            />
-          </svg>
-          <span>Show notepad</span>
-        </div>
-        <div class="checkbox_input" data-id="darkModeFont" data-default="true">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            class="svg_checkbox"
-          >
-            <path
-              class="svg_checkbox_false"
-              d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm1-16H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-            />
-            <path
-              class="svg_checkbox_true"
-              d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8.29 13.29c-.39.39-1.02.39-1.41 0L5.71 12.7c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L10 14.17l6.88-6.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-7.58 7.59z"
-            />
-          </svg>
-          <span>Light Font</span>
+        <div class="page_content">
+          <div
+            class="checkbox_input"
+            data-id="showNotes"
+            data-default="true"
+            name="Show notepad"
+          ></div>
+          <div
+            class="checkbox_input"
+            data-id="darkModeFont"
+            data-default="true"
+            name="Light Font"
+          ></div>
         </div>
       </div>
       <div class="page page1">
         <h2 class="page_header">Search Engine</h2>
-        <div
-          class="multiple_choice"
-          data-id="searchEngine"
-          data-src="search_engine"
-          data-default="duck"
-        ></div>
+        <div class="page_content">
+          <div
+            class="multiple_choice"
+            data-id="searchEngine"
+            data-src="search_engine"
+            data-default="duck"
+          ></div>
+        </div>
       </div>
       <div class="page page2">
-        <h2 class="page_header">Clock / Date</h2>
-        <div class="checkbox_input" data-id="showDate" data-default="true">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            class="svg_checkbox"
-          >
-            <path
-              class="svg_checkbox_false"
-              d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm1-16H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-            />
-            <path
-              class="svg_checkbox_true"
-              d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8.29 13.29c-.39.39-1.02.39-1.41 0L5.71 12.7c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L10 14.17l6.88-6.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-7.58 7.59z"
-            />
-          </svg>
-          <span>Show Date</span>
+        <h2 class="page_header">Date</h2>
+        <div class="page_content">
+          <div
+            class="checkbox_input"
+            data-id="showDate"
+            data-default="true"
+            name="Show date"
+          ></div>
+          <h3 class="subheader">Date format</h3>
+          <div
+            class="multiple_choice"
+            data-id="dateFormat"
+            data-src="dateFormats"
+            data-default="default"
+          ></div>
         </div>
-        <div class="checkbox_input" data-id="showTime" data-default="true">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            class="svg_checkbox"
-          >
-            <path
-              class="svg_checkbox_false"
-              d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm1-16H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-            />
-            <path
-              class="svg_checkbox_true"
-              d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8.29 13.29c-.39.39-1.02.39-1.41 0L5.71 12.7c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L10 14.17l6.88-6.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-7.58 7.59z"
-            />
-          </svg>
-          <span>Show Time</span>
+      </div>
+      <div class="page page3">
+        <h2 class="page_header">Clock</h2>
+        <div class="page_content">
+          <div
+            class="checkbox_input"
+            data-id="showTime"
+            data-default="true"
+            name="Show time"
+          ></div>
+          <div
+            class="checkbox_input"
+            data-id="showSeconds"
+            data-default="false"
+            name="Show seconds"
+          ></div>
+          <h3 class="subheader">Clock format</h3>
+          <div
+            class="multiple_choice"
+            data-id="clockFormat"
+            data-src="clockFormats"
+            data-default="12h"
+          ></div>
         </div>
-        <div class="checkbox_input" data-id="showSeconds" data-default="false">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            class="svg_checkbox"
-          >
-            <path
-              class="svg_checkbox_false"
-              d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm1-16H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-            />
-            <path
-              class="svg_checkbox_true"
-              d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8.29 13.29c-.39.39-1.02.39-1.41 0L5.71 12.7c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L10 14.17l6.88-6.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-7.58 7.59z"
-            />
-          </svg>
-          <span>Show Seconds</span>
+      </div>
+      <div class="page page4">
+        <h2 class="page_header">Language</h2>
+        <div class="page_content">
+          <div
+            class="multiple_choice"
+            data-id="language"
+            data-src="languages"
+            data-default="en"
+          ></div>
+          <p class="description">Updates after site reload</p>
         </div>
       </div>
     </div>
@@ -133,6 +150,13 @@
         </svg>
       </div>
       <div class="navigation_item">
+        <svg class="date_svg" viewBox="0 0 24 24">
+          <path
+            d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"
+          ></path>
+        </svg>
+      </div>
+      <div class="navigation_item">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -142,6 +166,13 @@
           <path
             d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"
           />
+        </svg>
+      </div>
+      <div class="navigation_item">
+        <svg class="language_svg" viewBox="0 0 24 24">
+          <path
+            d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"
+          ></path>
         </svg>
       </div>
     </div>

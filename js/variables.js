@@ -141,6 +141,16 @@ const multiple_choices = {
   ],
   languages: Object.entries(languages).map(([id, lang]) => ({ id, ...lang })),
   dateFormats: Object.entries(dateFormats).map(([id, name]) => ({ id, name })),
+  clockFormats: [
+    {
+      id: "12h",
+      name: "12h",
+    },
+    {
+      id: "am/pm",
+      name: "am/pm",
+    },
+  ],
 };
 
 const backgroundAmount = 36;
