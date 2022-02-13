@@ -98,8 +98,8 @@ async function clockInit() {
   }
 
   function stringifyDate(date) {
-    const day = date.getDay().toString().padStart(2, "0");
-    const month = date.getMonth().toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear().toString().slice(-2);
     let format = dateFormats[dateFormat];
     format = format.replace("dd", day);
