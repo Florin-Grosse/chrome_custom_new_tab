@@ -7,8 +7,22 @@ const languages = {
         title: "Confirm deletion",
         confirm: "Delete",
       },
-      backgroundAdd: {
+      backgroundAddOptions: {
         title: "Add background",
+        image: "image",
+        gradient: "gradient",
+        color: "color",
+      },
+      backgroundAddImage: {
+        title: "Add background image",
+        confirm: "Apply",
+      },
+      backgroundAddGradient: {
+        title: "Add background gradient",
+        confirm: "Apply",
+      },
+      backgroundAddColor: {
+        title: "Add background color",
         confirm: "Apply",
       },
       websiteAdd: {
@@ -60,9 +74,23 @@ const languages = {
         title: "Löschen bestätigen",
         confirm: "Löschen",
       },
-      backgroundAdd: {
+      backgroundAddOptions: {
         title: "Hintergrund hinzufügen",
-        confirm: "Anwenden",
+        image: "Bild",
+        gradient: "Farbverlauf",
+        color: "Farbe",
+      },
+      backgroundAddImage: {
+        title: "Hintergrundbild hinzufügen",
+        confirm: "hinzufügen",
+      },
+      backgroundAddGradient: {
+        title: "Hintergrundfarbverlauf hinzufügen",
+        confirm: "Hinzufügen",
+      },
+      backgroundAddColor: {
+        title: "Hintergrundfarbe hinzufügen",
+        confirm: "Hinzufügen",
       },
       websiteAdd: {
         title: "Webseite hinzufügen",

@@ -143,8 +143,39 @@ async function backgroundInit() {
   // handle add event for background icons
   async function backgroundHandleAdd() {
     try {
-      const overlayText = languages[language].overlays.backgroundAdd;
-      const [bg] = (
+      let overlayText = languages[language].overlays.backgroundAddOptions;
+      const { button } = await openOverlay({
+        headerText: overlayText.title,
+        buttons: [
+          {
+            name: overlayText.image,
+            value: "image",
+          },
+          {
+            name: overlayText.gradient,
+            value: "gradient",
+          },
+          {
+            name: overlayText.color,
+            value: "color",
+          },
+        ],
+      });
+
+      // get new text for overlay
+      switch (button) {
+        case "image":
+          overlayText = languages[language].overlays.backgroundAddImage;
+          break;
+        case "gradient":
+          overlayText = languages[language].overlays.backgroundAddGradient;
+          break;
+        case "color":
+          overlayText = languages[language].overlays.backgroundAddColor;
+          break;
+      }
+
+      let [bg] = (
         await openOverlay({
           headerText: overlayText.title,
           buttons: [{ name: overlayText.confirm, value: undefined }],
@@ -152,6 +183,19 @@ async function backgroundInit() {
           checkFct: (val) => val[0],
         })
       ).inputs;
+
+      // manipulate strings according to background type
+      switch (button) {
+        case "image":
+          bg = 'url("' + bg + '")';
+          break;
+        case "gradient":
+          break;
+        case "color":
+          if (!bg.startsWith("#")) bg = "#" + bg;
+          break;
+      }
+
       const id = getNewId();
       customBackgrounds.push({ bg, id });
       setStorageValue({
