@@ -43,9 +43,11 @@ function overlayInit() {
     customNodes = []
   ) {
     html.classList.add("overlay");
-    header.innerHTML = headerText;
-    button.innerHTML = buttonText;
-    wrapper.innerHTML = "";
+    header.textContent = headerText;
+    button.textContent = buttonText;
+    while (wrapper.lastElementChild) {
+      wrapper.removeChild(parent.lastElementChild);
+    }
     inputs.forEach((input) => {
       const span = document.createElement("span");
       span.innerText = input.name || input;
