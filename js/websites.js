@@ -256,11 +256,18 @@ async function websitesInit() {
     );
 
     // remove website
-    document
-      .querySelectorAll(".remove_website")
-      .forEach((ele) =>
-        ele.addEventListener("click", () => removeWebsite(index))
-      );
+    document.querySelectorAll(".remove_website").forEach((ele) =>
+      ele.addEventListener("click", async () => {
+        try {
+          const overlayText = languages[language].overlays.websiteConfirmDelete;
+          await openOverlay({
+            headerText: overlayText.title,
+            buttons: [{ name: overlayText.confirm, value: undefined }],
+          });
+          removeWebsite(index);
+        } catch (_) {}
+      })
+    );
 
     // change order
     document.getElementById("toggle_drag").addEventListener("click", () => {

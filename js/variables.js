@@ -21,6 +21,10 @@ const languages = {
         confirm: "Confirm",
         inputNames: ["URL", "Icon", "Small Icon"],
       },
+      websiteConfirmDelete: {
+        title: "Confirm deletion",
+        confirm: "Delete",
+      },
     },
     paths: {
       // context menu
@@ -69,6 +73,10 @@ const languages = {
         title: "Webseite bearbeiten",
         confirm: "Speichern",
         inputNames: ["URL", "Icon", "Kleines Icon"],
+      },
+      websiteConfirmDelete: {
+        title: "Löschen bestätigen",
+        confirm: "Löschen",
       },
     },
     paths: {
