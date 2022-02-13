@@ -1,8 +1,9 @@
 function overlayInit() {
   const html = document.firstElementChild;
-  const button = document.getElementById("overlay_button");
+  const buttonTemplate = document.getElementById("overlay_button_template");
   const header = document.querySelector("#overlay h1");
-  const wrapper = document.getElementById("overlay_inputs");
+  const buttonWrapper = document.getElementById("overlay_buttons");
+  const inputWrapper = document.getElementById("overlay_inputs");
 
   function addEventListener() {
     // close overlay on esc press
@@ -13,11 +14,9 @@ function overlayInit() {
     });
 
     // close overlay button
-    document
-      .getElementById("close_overlay_svg")
-      .addEventListener("click", () => {
-        closeOverlay();
-      });
+    document.getElementById("close_overlay").addEventListener("click", () => {
+      closeOverlay();
+    });
 
     // close overlay on click
     document.getElementById("overlay").addEventListener("click", (e) => {
@@ -28,49 +27,90 @@ function overlayInit() {
     document.addEventListener("keypress", (e) =>
       e.key === "Enter" ? closeOverlay(true) : null
     );
-
-    // submit on button click
-    button.addEventListener("click", () => closeOverlay(true));
   }
 
   let confirmFunction;
   let rejectFunction;
   function openOverlay(
-    headerText,
-    buttonText,
-    inputs = [],
-    checkFct = () => true,
-    customNodes = []
-  ) {
-    html.classList.add("overlay");
-    header.textContent = headerText;
-    button.textContent = buttonText;
-    while (wrapper.lastElementChild) {
-      wrapper.removeChild(parent.lastElementChild);
+    /*
+    {
+      headerText?: string,
+      buttons?: [
+        {
+          // button text
+          name: string,
+          // return value if button is pressed
+          value: any
+        }
+      ],
+      // input labels + length of inputs
+      inputs?: (string | {name: string, value: string})[],
+      // checks if inputs are valid
+      checkFct?: (inputs: string[]) => boolean,
+      // custom HTML Nodes to put in Popup
+      customNodes?: Node[]
     }
-    inputs.forEach((input) => {
+    */
+    content
+    // returns Promise<{button: any (value of pressed button -> see buttons attribute), inputs: string[]}>
+  ) {
+    content = {
+      ...{
+        headerText: "",
+        buttons: [
+          {
+            name: "Confirm",
+            value: undefined,
+          },
+        ],
+        inputs: [],
+        checkFct: () => true,
+        customNodes: [],
+      },
+      ...content,
+    };
+    html.classList.add("overlay");
+    header.textContent = content.headerText;
+    while (inputWrapper.lastElementChild) {
+      inputWrapper.removeChild(inputWrapper.lastElementChild);
+    }
+    while (buttonWrapper.lastElementChild) {
+      buttonWrapper.removeChild(buttonWrapper.lastElementChild);
+    }
+    content.inputs.forEach((input) => {
       const span = document.createElement("span");
       span.innerText = input.name || input;
       const inputEle = document.createElement("input");
       if (input.value) inputEle.value = input.value;
-      wrapper.append(span);
-      wrapper.append(inputEle);
+      inputWrapper.append(span);
+      inputWrapper.append(inputEle);
     });
 
-    customNodes.forEach((node) => wrapper.append(node));
+    content.buttons.forEach((button) => {
+      const element = buttonTemplate.content.cloneNode(true).children[0];
+      element.textContent = button.name;
+      // submit on button click
+      element.addEventListener("click", () => closeOverlay(true, button.value));
+      buttonWrapper.append(element);
+    });
 
-    if (inputs.length > 0)
-      requestAnimationFrame(() => wrapper.querySelector("input").focus());
+    content.customNodes.forEach((node) => inputWrapper.append(node));
+
+    if (content.inputs.length > 0)
+      requestAnimationFrame(() => inputWrapper.querySelector("input").focus());
 
     return new Promise((resolve, reject) => {
-      confirmFunction = () => {
-        const values = [...wrapper.querySelectorAll("input")].map(
+      confirmFunction = (buttonValue) => {
+        const values = [...inputWrapper.querySelectorAll("input")].map(
           (input) => input.value
         );
-        if (checkFct(values)) {
-          resolve(
-            [...wrapper.querySelectorAll("input")].map((input) => input.value)
-          );
+        if (content.checkFct(values)) {
+          resolve({
+            button: buttonValue,
+            inputs: [...inputWrapper.querySelectorAll("input")].map(
+              (input) => input.value
+            ),
+          });
           confirmFunction = undefined;
           return true;
         } else return false;
@@ -82,9 +122,9 @@ function overlayInit() {
     });
   }
 
-  function closeOverlay(success = false) {
+  function closeOverlay(success = false, value = undefined) {
     if (success) {
-      if (confirmFunction && confirmFunction())
+      if (confirmFunction && confirmFunction(value))
         html.classList.remove("overlay");
     } else if (rejectFunction) {
       html.classList.remove("overlay");

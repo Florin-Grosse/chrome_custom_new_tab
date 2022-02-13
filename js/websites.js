@@ -68,12 +68,14 @@ async function websitesInit() {
       .addEventListener("click", async () => {
         try {
           const overlayText = languages[language].overlays.websiteAdd;
-          const [url, icon, smallIcon] = await openOverlay(
-            overlayText.title,
-            overlayText.title,
-            overlayText.inputNames,
-            (values) => values[0]
-          );
+          const [url, icon, smallIcon] = (
+            await openOverlay({
+              headerText: overlayText.title,
+              buttons: [{ name: overlayText.confirm, value: undefined }],
+              inputs: overlayText.inputNames,
+              checkFct: (values) => values[0],
+            })
+          ).inputs;
           addWebsite(url, icon, smallIcon);
         } catch (_) {}
       });
@@ -271,22 +273,24 @@ async function websitesInit() {
       .addEventListener("click", async () => {
         try {
           const overlayText = languages[language].overlays.websiteEdit;
-          const [url, icon, smallIcon] = await openOverlay(
-            overlayText.title,
-            overlayText.confirm,
-            [
-              { name: overlayText.inputNames[0], value: websites[index].url },
-              {
-                name: overlayText.inputNames[1],
-                value: websites[index].icon || "",
-              },
-              {
-                name: overlayText.inputNames[2],
-                value: websites[index].small_icon || "",
-              },
-            ],
-            (values) => values[0]
-          );
+          const [url, icon, smallIcon] = (
+            await openOverlay({
+              headerText: overlayText.title,
+              buttons: [{ name: overlayText.confirm, value: undefined }],
+              inputs: [
+                { name: overlayText.inputNames[0], value: websites[index].url },
+                {
+                  name: overlayText.inputNames[1],
+                  value: websites[index].icon || "",
+                },
+                {
+                  name: overlayText.inputNames[2],
+                  value: websites[index].small_icon || "",
+                },
+              ],
+              checkFct: (values) => values[0],
+            })
+          ).inputs;
           editWebsite(index, url, icon, smallIcon);
         } catch (_) {}
       });

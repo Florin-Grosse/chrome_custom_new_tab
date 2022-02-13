@@ -233,7 +233,11 @@ body
             padding: 1vmin
             width: 100%
             min-width: 15rem
-        button
+        #overlay_buttons
+            display: flex
+            flex-direction: column
+            width: 100%
+        .overlay_button
             background-color: var(--bg)
             border: 0
             outline: none
@@ -245,16 +249,25 @@ body
             font-size: 1.5rem
             &:hover
                 background-color: #242424
-    svg
+    #close_overlay
         position: absolute
-        top: 2.5vmin
-        right: 2.5vmin
-        height: 5vmin
-        width: 5vmin
-        cursor: pointer
-        background-color: var(--bg-transparent)
+        top: 2rem
+        right: 2rem
+        height: 3rem
+        width: 3rem
+        outline: none
+        border: none
+        margin: 0
+        padding: 0
         border-radius: 50%
-        padding: 1vmin
+        background: transparent
+        z-index: 1
+        cursor: pointer
+        transition: background-color .25s ease-in-out
+        svg
+            fill: var(--text)
+        &:hover
+            background-color: var(--text-transparent)
 
 .overlay #overlay
     opacity: 1

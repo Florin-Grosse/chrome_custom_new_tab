@@ -121,7 +121,10 @@ async function backgroundInit() {
   async function backgroundHandleDelete(id, element) {
     try {
       const overlayText = languages[language].overlays.backgroundConfirmDelete;
-      await openOverlay(overlayText.title, overlayText.confirm, []);
+      await openOverlay({
+        headerText: overlayText.title,
+        buttons: [{ name: overlayText.confirm, value: undefined }],
+      });
       selected = selected.filter((ele) => ele !== id);
       customBackgrounds = customBackgrounds.filter((bg) => bg.id !== id);
 
@@ -141,12 +144,14 @@ async function backgroundInit() {
   async function backgroundHandleAdd() {
     try {
       const overlayText = languages[language].overlays.backgroundAdd;
-      const [bg] = await openOverlay(
-        overlayText.title,
-        overlayText.confirm,
-        [""],
-        (val) => val[0]
-      );
+      const [bg] = (
+        await openOverlay({
+          headerText: overlayText.title,
+          buttons: [{ name: overlayText.confirm, value: undefined }],
+          inputs: [""],
+          checkFct: (val) => val[0],
+        })
+      ).inputs;
       const id = getNewId();
       customBackgrounds.push({ bg, id });
       setStorageValue({
