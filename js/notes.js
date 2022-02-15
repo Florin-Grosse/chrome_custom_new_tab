@@ -82,7 +82,7 @@ async function notepadInit() {
           current.textarea.value = note;
           resizeTextarea(current.textarea);
 
-          current.input.value = title;
+          current.input.value = title || "";
         }
         // add new notes
       } else addNote(id, note);
