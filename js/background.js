@@ -1,17 +1,63 @@
 async function backgroundInit() {
   const cssBackgroundPrefix = "center center / cover ";
+  const data = await getStorageValue(["background", "language"]);
   let {
-    background: { customBackgrounds, selected },
+    background: { selected, usedIds },
     language,
-  } = await getStorageValue(["background", "language"]);
+  } = data;
+  let syncCustomBackgrounds = data.background.customBackgrounds;
+
+  // image backgrounds from local storage since sync storage is too small
+  let localCustomBackgrounds = (
+    await getStorageValue("customBackgrounds", true)
+  ).customBackgrounds;
+
+  let customBackgrounds = syncCustomBackgrounds.concat(localCustomBackgrounds);
 
   // randomly selected background from all selected
   let current = 0;
   resetCurrent(); // init value
 
+  // version compatability (usedIds was added in 1.3.4)
+  if (usedIds === undefined) {
+    usedIds = [];
+    setStorageValue({
+      background: {
+        selected,
+        customBackgrounds: syncCustomBackgrounds,
+        currentTab: current,
+        usedIds,
+      },
+    });
+  }
+
+  // only not locally available backgrounds selected
+  if (!selected.some((id) => backgroundExists(id))) {
+    selected.push(0);
+    setStorageValue({
+      background: {
+        selected,
+        customBackgrounds: syncCustomBackgrounds,
+        currentTab: current,
+        usedIds,
+      },
+    });
+  }
+
+  function backgroundExists(id) {
+    return (
+      id < backgroundAmount || customBackgrounds.some((bg) => bg.id === id)
+    );
+  }
+
   // randomly chooses a background of the available
   function resetCurrent() {
-    current = selected[Math.round(Math.random() * (selected.length - 1))];
+    // only choose from locally available backgrounds
+    const filteredSelected = selected.filter((id) => backgroundExists(id));
+    current =
+      filteredSelected[
+        Math.round(Math.random() * (filteredSelected.length - 1))
+      ];
   }
 
   const background_element = document.getElementById("background");
@@ -32,15 +78,20 @@ async function backgroundInit() {
 
     if (current >= backgroundAmount) {
       // custom background selected
-      background_element.style.background =
-        cssBackgroundPrefix +
-        customBackgrounds.find((bg) => bg.id === current).bg;
-    } else {
-      // background is one of default ones
-      background_element.style.background =
-        cssBackgroundPrefix + "var(--background)";
-      background_element.classList.add("background" + current);
+      const background = customBackgrounds.find((bg) => bg.id === current);
+
+      if (background) {
+        const backgroundString = cssBackgroundPrefix + background.bg;
+        background_element.style.background = backgroundString;
+        // complete if background was successfully applied
+        return;
+      }
+      // fall through if edge case that pc does not have the selected local background
     }
+    // background is one of default ones
+    background_element.style.background =
+      cssBackgroundPrefix + "var(--background)";
+    background_element.classList.add("background" + current);
   }
 
   const settings = document.getElementById("settings");
@@ -56,6 +107,8 @@ async function backgroundInit() {
   // creates a new element for the background id of index
   // mounts it at the end of the background_options
   function createBackgroundIcon(id) {
+    // image background is not locally available
+    if (!backgroundExists(id)) return;
     const element = (
       id < backgroundAmount ? backgroundTemplate : customBackgroundTemplate
     ).content.cloneNode(true).children[0];
@@ -110,7 +163,12 @@ async function backgroundInit() {
     }
 
     await setStorageValue({
-      background: { selected, customBackgrounds, currentTab: current },
+      background: {
+        selected,
+        customBackgrounds: syncCustomBackgrounds,
+        currentTab: current,
+        usedIds,
+      },
     });
 
     // load just selected background
@@ -118,26 +176,49 @@ async function backgroundInit() {
   }
 
   // handle delete event for custom backgrounds
-  async function backgroundHandleDelete(id, element) {
+  async function backgroundHandleDelete(id) {
     try {
       const overlayText = languages[language].overlays.backgroundConfirmDelete;
       await openOverlay({
         headerText: overlayText.title,
         buttons: [{ name: overlayText.confirm, value: undefined }],
       });
+
+      usedIds = usedIds.filter((ele) => ele !== id);
+
       selected = selected.filter((ele) => ele !== id);
-      customBackgrounds = customBackgrounds.filter((bg) => bg.id !== id);
+
+      if (selected.length === 0) selected = [0];
+      // only not locally available backgrounds selected
+      else if (!selected.some((id) => backgroundExists(id))) selected.push(0);
+
+      const length = syncCustomBackgrounds.length;
+      syncCustomBackgrounds = syncCustomBackgrounds.filter(
+        (bg) => bg.id !== id
+      );
+      const isLocal = syncCustomBackgrounds.length === length;
+
+      if (isLocal)
+        localCustomBackgrounds = localCustomBackgrounds.filter(
+          (bg) => bg.id !== id
+        );
 
       if (id === current) resetCurrent();
+
+      if (isLocal)
+        setStorageValue({ customBackgrounds: localCustomBackgrounds }, true);
 
       setStorageValue({
         background: {
           selected,
-          customBackgrounds,
+          customBackgrounds: syncCustomBackgrounds,
           currentTab: current,
+          usedIds,
         },
       });
-    } catch (_) {}
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   // handle add event for background icons
@@ -175,33 +256,97 @@ async function backgroundInit() {
           break;
       }
 
-      let [bg] = (
-        await openOverlay({
-          headerText: overlayText.title,
-          buttons: [{ name: overlayText.confirm, value: undefined }],
-          inputs: [""],
-          checkFct: (val) => val[0],
-        })
-      ).inputs;
+      let bg;
+      if (button !== "image") {
+        [bg] = (
+          await openOverlay({
+            headerText: overlayText.title,
+            buttons: [{ name: overlayText.confirm, value: undefined }],
+            inputs: [""],
+            checkFct: (val) => val[0],
+          })
+        ).inputs;
 
-      // manipulate strings according to background type
-      switch (button) {
-        case "image":
-          bg = 'url("' + bg + '")';
-          break;
-        case "gradient":
-          break;
-        case "color":
-          if (!bg.startsWith("#")) bg = "#" + bg;
-          break;
+        // manipulate strings according to background type
+        switch (button) {
+          case "image":
+            bg = 'url("' + bg + '")';
+            break;
+          case "gradient":
+            break;
+          case "color":
+            if (!bg.startsWith("#")) bg = "#" + bg;
+            break;
+        }
+      } else {
+        const input_template = document.getElementById("upload_image_template");
+        const overlayPromise = openOverlay({
+          headerText: overlayText.title,
+          buttons: [
+            {
+              name: overlayText.confirm,
+              value: undefined,
+            },
+          ],
+          checkFct: () => document.querySelector(".upload_image_input").value,
+          customNodes: input_template.content.cloneNode(true).children,
+        });
+
+        requestAnimationFrame(() => {
+          const wrapper = document.querySelector(
+            "#overlay .upload_image_wrapper"
+          );
+          document
+            .querySelector("#overlay .upload_image_input")
+            .addEventListener("change", (e) => {
+              wrapper.classList.toggle("filled", e.target.files.length);
+            });
+        });
+
+        // wait for confirm button
+        await overlayPromise;
+
+        const file = document.querySelector("#overlay .upload_image_input")
+          .files[0];
+
+        bg =
+          "url(" +
+          (await new Promise((res) => {
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+              res(reader.result);
+            };
+            reader.readAsDataURL(file);
+          })) +
+          ")";
       }
 
       const id = getNewId();
-      customBackgrounds.push({ bg, id });
-      setStorageValue({
-        background: { selected, customBackgrounds, currentTab: current },
+      (button === "image"
+        ? localCustomBackgrounds
+        : syncCustomBackgrounds
+      ).push({
+        bg,
+        id,
       });
-    } catch (_) {}
+      setStorageValue({
+        background: {
+          selected,
+          customBackgrounds: syncCustomBackgrounds,
+          currentTab: current,
+          usedIds,
+        },
+      });
+      setStorageValue(
+        {
+          customBackgrounds: localCustomBackgrounds,
+        },
+        true
+      );
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   // update background icons to changes made on other new tab
@@ -222,7 +367,9 @@ async function backgroundInit() {
     });
 
     const addedSelected = selected.filter(
-      (id) => !backgroundIconsWrapper.querySelector(`[bgId="${id}"].selected`)
+      (id) =>
+        !backgroundIconsWrapper.querySelector(`[bgId="${id}"].selected`) &&
+        backgroundExists(id)
     );
     const removedSelected = [
       ...backgroundIconsWrapper.querySelectorAll(`.background_option.selected`),
@@ -251,9 +398,10 @@ async function backgroundInit() {
   // get an id that is not yet used by another custom background
   function getNewId() {
     let id = backgroundAmount;
-    while (customBackgrounds.some((bg) => bg.id === id)) {
+    while (usedIds.some((ele) => ele === id)) {
       id++;
     }
+    usedIds.push(id);
     return id;
   }
 
@@ -273,12 +421,22 @@ async function backgroundInit() {
   // set global var to current bg when tab is focused
   window.addEventListener("focus", () => {
     setStorageValue({
-      background: { selected, customBackgrounds, currentTab: current },
+      background: {
+        selected,
+        customBackgrounds: syncCustomBackgrounds,
+        currentTab: current,
+        usedIds,
+      },
     });
   });
   // set current when new tab is opened
   setStorageValue({
-    background: { selected, customBackgrounds, currentTab: current },
+    background: {
+      selected,
+      customBackgrounds: syncCustomBackgrounds,
+      currentTab: current,
+      usedIds,
+    },
   });
 
   // add settings eventListener
@@ -303,7 +461,28 @@ async function backgroundInit() {
   // global change listener
   changeListener.push((changes) => {
     if (changes.background !== undefined) {
-      ({ customBackgrounds, selected } = changes.background.newValue);
+      ({ selected, usedIds } = changes.background.newValue);
+      syncCustomBackgrounds = changes.background.newValue.customBackgrounds;
+      customBackgrounds = syncCustomBackgrounds.concat(localCustomBackgrounds);
+      // only not locally available backgrounds selected
+      if (!selected.some((id) => backgroundExists(id))) {
+        selected.push(0);
+        setStorageValue({
+          background: {
+            selected,
+            customBackgrounds: syncCustomBackgrounds,
+            currentTab: current,
+            usedIds,
+          },
+        });
+      }
+
+      loadBackground();
+      updateBackgroundIcons();
+    }
+    if (changes.customBackgrounds !== undefined) {
+      localCustomBackgrounds = changes.customBackgrounds.newValue;
+      customBackgrounds = syncCustomBackgrounds.concat(localCustomBackgrounds);
       loadBackground();
       updateBackgroundIcons();
     }

@@ -273,6 +273,51 @@ body
     opacity: 1
     display: flex
 
+// image upload when adding image background
+.upload_image_wrapper
+    position: relative
+    overflow: hidden
+    margin-top: calc(var(--border-radius) * 1.5)
+    .upload_image_inner
+        pointer-events: none
+        display: flex
+        align-items: center
+        justify-content: center
+        padding: var(--border-radius)
+        border: .15vmin solid var(--text)
+        border-radius: var(--border-radius)
+        transition: box-shadow .25s ease-in-out
+        p
+            font-size: 2em
+            margin: 0
+    .upload_image_input
+        position: absolute
+        z-index: 1
+        top: 0
+        left: 0
+        height: 100%
+        width: 100%
+        opacity: 0
+        display: block
+        overflow: hidden
+        cursor: pointer
+        &:focus, &:hover
+            ~ .upload_image_inner
+                box-shadow: rgba(0, 0, 0, 0.3) 1px 1px 6px 2px
+    &.filled
+        .upload_image_empty
+            display: none
+    &:not(.filled)
+        .upload_image_filled
+            display: none
+
+.upload_image_comment
+    display: block
+    font-size: 1.5em
+    font-weight: bold
+    text-align: center
+    max-width: 100%
+
 
 /*--- search bar --- */
 #search_bar_form
@@ -470,6 +515,8 @@ body
         border: .15vmin solid var(--text)
         border-radius: 50%
         background: var(--background)
+        background-position: center center
+        background-size: cover
         transition: transform .25s ease-in-out
         
         width: var(--size)

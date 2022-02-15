@@ -192,10 +192,12 @@ const multiple_choices = {
 const backgroundAmount = 36;
 
 const defaultStorageValues = {
+  // sync storage
   background: {
     currentTab: 0,
     customBackgrounds: [],
     selected: [0],
+    usedIds: [],
   },
   clockFormat: "12h",
   darkModeFont: true,
@@ -225,39 +227,44 @@ const defaultStorageValues = {
       icon: "https://www.amazon.de/favicon.ico",
     },
   ],
+  // local storage
+  customBackgrounds: [],
 };
 
 // returns promise to get async storage data
 // initializes data if value is not defined yet
-async function getStorageValue(values = null) {
-  return new Promise(function (resolve, reject) {
-    chrome.storage.sync.get(values, async function (options) {
-      if (Array.isArray(values)) {
-        await Promise.all(
-          values
-            .map((key) => {
-              if (options[key] === undefined) {
-                options[key] = defaultStorageValues[key];
-                return setStorageValue({ [key]: options[key] });
-              }
-              return null;
-            })
-            .filter(Boolean)
-        );
-      } else if (typeof values === "string") {
-        if (options[values] === undefined) {
-          options[values] = defaultStorageValues[values];
-          await setStorageValue({ [values]: options[values] });
+async function getStorageValue(values = null, local = false) {
+  return new Promise(function (resolve) {
+    chrome.storage[local ? "local" : "sync"].get(
+      values,
+      async function (options) {
+        if (Array.isArray(values)) {
+          await Promise.all(
+            values
+              .map((key) => {
+                if (options[key] === undefined) {
+                  options[key] = defaultStorageValues[key];
+                  return setStorageValue({ [key]: options[key] });
+                }
+                return null;
+              })
+              .filter(Boolean)
+          );
+        } else if (typeof values === "string") {
+          if (options[values] === undefined) {
+            options[values] = defaultStorageValues[values];
+            await setStorageValue({ [values]: options[values] });
+          }
         }
+        resolve(options);
       }
-      resolve(options);
-    });
+    );
   });
 }
 
-async function setStorageValue(values) {
-  return new Promise(function (resolve, reject) {
-    chrome.storage.sync.set(values, function (options) {
+async function setStorageValue(values, local) {
+  return new Promise(function (resolve) {
+    chrome.storage[local ? "local" : "sync"].set(values, function (options) {
       resolve(options);
     });
   });

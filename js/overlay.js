@@ -94,7 +94,7 @@ function overlayInit() {
       buttonWrapper.append(element);
     });
 
-    content.customNodes.forEach((node) => inputWrapper.append(node));
+    [...content.customNodes].forEach((node) => inputWrapper.append(node));
 
     if (content.inputs.length > 0)
       requestAnimationFrame(() => inputWrapper.querySelector("input").focus());

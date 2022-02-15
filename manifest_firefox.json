@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Custom New Tab",
   "description": "Want a better new tab window? Here you go.",
-  "version": "1.3.2",
+  "version": "1.3.4",
   "author": "Florin Große",
   "background": {
     "scripts": ["js/backgroundScript.js"]
@@ -21,7 +21,7 @@
       "strict_min_version": "42.0"
     }
   },
-  "permissions": ["storage", "contextMenus", "activeTab"],
+  "permissions": ["storage", "unlimitedStorage", "contextMenus", "activeTab"],
   "icons": {
     "1080": "resources/icons/icon.png",
     "16": "resources/icons/icon_16.png",

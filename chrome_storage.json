@@ -6,7 +6,9 @@
       { "bg": "linear-gradient(45deg, red, blue)", "id": 1 },
       { "bg": "src(\"imgurl\")", "id": 2 }
     ],
-    "selected": [2, 4, 10, 1]
+    "selected": [2, 4, 10, 1],
+    "--usedIds": "id used for backgrounds -> needed since some backgrounds are only locally available",
+    "usedIds": [12, 3]
   },
   "--clockFormat": "format of the clock, either 12h for 00:00-23:59 or am/pm for 12:00pm - 11:59pm",
   "clockFormat": "12h",
