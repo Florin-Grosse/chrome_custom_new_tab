@@ -18,7 +18,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "{45fcba70-834e-4253-9e54-946fb6fe622c}",
-      "strict_min_version": "42.0"
+      "strict_min_version": "57.0"
     }
   },
   "permissions": ["storage", "unlimitedStorage", "contextMenus", "activeTab"],
