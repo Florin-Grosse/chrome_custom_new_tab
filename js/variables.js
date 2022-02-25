@@ -191,6 +191,8 @@ const multiple_choices = {
 
 const backgroundAmount = 36;
 
+const CSS_BACKGROUND_PREFIX = "center center / cover ";
+
 const defaultStorageValues = {
   // sync storage
   background: {

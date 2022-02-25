@@ -1,5 +1,4 @@
 async function backgroundInit() {
-  const cssBackgroundPrefix = "center center / cover ";
   const data = await getStorageValue(["background", "language"]);
   let {
     background: { selected, usedIds },
@@ -81,7 +80,7 @@ async function backgroundInit() {
       const background = customBackgrounds.find((bg) => bg.id === current);
 
       if (background) {
-        const backgroundString = cssBackgroundPrefix + background.bg;
+        const backgroundString = CSS_BACKGROUND_PREFIX + background.bg;
         background_element.style.background = backgroundString;
         // complete if background was successfully applied
         return;
@@ -90,7 +89,7 @@ async function backgroundInit() {
     }
     // background is one of default ones
     background_element.style.background =
-      cssBackgroundPrefix + "var(--background)";
+      CSS_BACKGROUND_PREFIX + "var(--background)";
     background_element.classList.add("background" + current);
   }
 
@@ -121,7 +120,7 @@ async function backgroundInit() {
       element.classList.add("background" + id);
     } else {
       const bg = customBackgrounds.find((bg) => bg.id === id);
-      element.style.background = cssBackgroundPrefix + bg.bg;
+      element.style.background = CSS_BACKGROUND_PREFIX + bg.bg;
       element.querySelector(".deleteSvg").addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();

@@ -104,12 +104,15 @@ async function popupInit() {
   loadMultipleChoiceInputs();
 
   // set correct background for header
-  const { background } = await getStorageValue(["background"]);
+  const { background } = await getStorageValue("background");
+  const customBackgrounds = background.customBackgrounds.concat(
+    (await getStorageValue("customBackgrounds", true)).customBackgrounds
+  );
   const header = document.querySelector(".header");
   if (background.currentTab >= backgroundAmount) {
-    header.style.background = background.customBackgrounds.find(
-      (bg) => bg.id === background.currentTab
-    ).bg;
+    header.style.background =
+      CSS_BACKGROUND_PREFIX +
+      customBackgrounds.find((bg) => bg.id === background.currentTab).bg;
   } else header.classList.add("background" + background.currentTab);
 }
 
