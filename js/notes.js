@@ -163,17 +163,23 @@ async function notepadInit() {
       const currentLine =
         currentLineIndex === -1 ? "" : lines[currentLineIndex];
 
-      if (currentLine.startsWith(listStartString)) {
+      const trimmedCurrentLine = currentLine.trimStart();
+
+      if (trimmedCurrentLine.startsWith(listStartString)) {
         // only set enter true if value gets changed by this listener
         enter = true;
         e.preventDefault();
+
+        const indentLength = currentLine.length - trimmedCurrentLine.length;
 
         const newValue = lines
           .slice(0, currentLineIndex)
           .concat(
             [
               currentLine.slice(0, temp),
-              listStartString + currentLine.slice(temp),
+              " ".repeat(indentLength) +
+                listStartString +
+                currentLine.slice(temp),
             ],
             lines.slice(currentLineIndex + 1)
           )
@@ -183,8 +189,8 @@ async function notepadInit() {
         notes.find(({ id }) => id == eleId).note = newValue;
 
         setStorageNotes();
-        const selectionStart = textarea.selectionStart;
-        const selectionEnd = textarea.selectionEnd;
+        const selectionStart = textarea.selectionStart + indentLength;
+        const selectionEnd = textarea.selectionEnd + indentLength;
 
         textarea.value = newValue;
 
