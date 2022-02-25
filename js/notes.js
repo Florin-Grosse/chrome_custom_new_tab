@@ -144,13 +144,26 @@ async function notepadInit() {
     textarea.addEventListener("keydown", (e) => {
       if (e.key !== "Enter") return;
       if (e.ctrlKey) {
-        // don't make new note if current is empty and would be deleted
-        if (textarea.value === "" && input.value === "") return;
-        const id = getNewId();
-        notes.push({ id, note: "", title: "" });
-        addNote(id, "", "", true);
-        setStorageValue({ notes });
-        return;
+        // get note under current
+        const nextNote = notes.reduce((cur, note) => {
+          if (note.id <= id) return cur;
+          if (note.id > (cur ? cur.id : Infinity)) return cur;
+          return note;
+        }, null);
+        // is not last note
+        if (nextNote) {
+          wrapper.querySelector(`.note[noteid="${nextNote.id}"] input`).focus();
+          return;
+        } else {
+          // only create new note if user is at last note
+          // don't make new note if current is empty and would be deleted
+          if (textarea.value === "" && input.value === "") return;
+          const id = getNewId();
+          notes.push({ id, note: "", title: "" });
+          addNote(id, "", "", true);
+          setStorageValue({ notes });
+          return;
+        }
       }
       if (e.shiftKey) return;
       const lines = textarea.value.split("\n");
