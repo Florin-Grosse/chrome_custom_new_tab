@@ -4,7 +4,7 @@
   "main": "index.html",
   "license": "ISC",
   "scripts": {
-    "sass": "sass --watch ./"
+    "sass": "sass --watch --no-source-map ./"
   },
   "devDependencies": {},
   "dependencies": {
