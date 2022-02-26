@@ -1,4 +1,15 @@
-const listStartString = "- ";
+const listStartingStrings = [
+  "- ",
+  "* ",
+  ". ",
+  "~ ",
+  "° ",
+  "-",
+  "*",
+  ".",
+  "~",
+  "°",
+];
 
 async function notepadInit() {
   let { notes, showNotes } = await getStorageValue(["notes", "showNotes"]);
@@ -26,7 +37,7 @@ async function notepadInit() {
 
   // value to prevent input eventListener to overwrite changes from keydown listener
   // counts for currently focused input
-  let enter = false;
+  let preventTextfieldSave = false;
   // id of  focused note
   let focused = -1;
 
@@ -120,11 +131,11 @@ async function notepadInit() {
     const input = element.querySelector("input");
     element.setAttribute("noteid", id);
     textarea.addEventListener("focus", () => {
-      enter = false;
+      preventTextfieldSave = false;
       focused = getId(element);
     });
     textarea.addEventListener("blur", (e) => {
-      enter = false;
+      preventTextfieldSave = false;
       // switch from note textarea to title input
       if (e.relatedTarget === input) return;
       focused = -1;
@@ -134,7 +145,7 @@ async function notepadInit() {
     });
     // update storage on change
     textarea.addEventListener("input", () => {
-      if (enter) return (enter = false);
+      if (preventTextfieldSave) return (preventTextfieldSave = false);
       const eleId = getId(element);
       notes.find(({ id }) => id == eleId).note = textarea.value;
       resizeTextarea(textarea);
@@ -142,30 +153,39 @@ async function notepadInit() {
     });
     // eventListener for enter key to possibly add a dash to the next line
     textarea.addEventListener("keydown", (e) => {
-      if (e.key !== "Enter") return;
-      if (e.ctrlKey) {
-        // get note under current
-        const nextNote = notes.reduce((cur, note) => {
-          if (note.id <= id) return cur;
-          if (note.id > (cur ? cur.id : Infinity)) return cur;
-          return note;
-        }, null);
-        // is not last note
-        if (nextNote) {
-          wrapper.querySelector(`.note[noteid="${nextNote.id}"] input`).focus();
-          return;
-        } else {
-          // only create new note if user is at last note
-          // don't make new note if current is empty and would be deleted
-          if (textarea.value === "" && input.value === "") return;
-          const id = getNewId();
-          notes.push({ id, note: "", title: "" });
-          addNote(id, "", "", true);
-          setStorageValue({ notes });
-          return;
+      // tab presses to indent or dedent lines if they are lists
+      // enter with list start creates new list entry
+      if (!["Tab", "Enter"].includes(e.key)) return;
+
+      if (e.key === "Enter") {
+        // when ctrl is pressed either move to next note or create new
+        if (e.ctrlKey) {
+          // get note under current
+          const nextNote = notes.reduce((cur, note) => {
+            if (note.id <= id) return cur;
+            if (note.id > (cur ? cur.id : Infinity)) return cur;
+            return note;
+          }, null);
+          // is not last note
+          if (nextNote) {
+            wrapper
+              .querySelector(`.note[noteid="${nextNote.id}"] input`)
+              .focus();
+            return;
+          } else {
+            // only create new note if user is at last note
+            // don't make new note if current is empty and would be deleted
+            if (textarea.value === "" && input.value === "") return;
+            const id = getNewId();
+            notes.push({ id, note: "", title: "" });
+            addNote(id, "", "", true);
+            setStorageValue({ notes });
+            return;
+          }
         }
+        if (e.shiftKey) return;
       }
-      if (e.shiftKey) return;
+
       const lines = textarea.value.split("\n");
       let temp = textarea.selectionStart;
       const currentLineIndex = lines.findIndex((line) => {
@@ -177,41 +197,91 @@ async function notepadInit() {
         currentLineIndex === -1 ? "" : lines[currentLineIndex];
 
       const trimmedCurrentLine = currentLine.trimStart();
+      const hasSpace = trimmedCurrentLine.match(/[1-9][0-9]*\.\s/) !== null;
+      const numberedList = trimmedCurrentLine.match(/[1-9][0-9]*\./)?.["0"];
+      const listStartString =
+        numberedList ||
+        listStartingStrings.find((str) => trimmedCurrentLine.startsWith(str));
+      // current line is part of a list
+      if (listStartString) {
+        let newValue = "";
+        let selectionStart = 0;
+        let selectionEnd = 0;
 
-      if (trimmedCurrentLine.startsWith(listStartString)) {
-        // only set enter true if value gets changed by this listener
-        enter = true;
-        e.preventDefault();
+        if (e.key === "Tab") {
+          // trying to dedent with not indetation
+          if (currentLine.length - trimmedCurrentLine.length < 2 && e.shiftKey)
+            return;
 
-        const indentLength = currentLine.length - trimmedCurrentLine.length;
+          e.preventDefault();
+          preventTextfieldSave = true;
 
-        const newValue = lines
-          .slice(0, currentLineIndex)
-          .concat(
-            [
-              currentLine.slice(0, temp),
-              " ".repeat(indentLength) +
-                listStartString +
-                currentLine.slice(temp),
-            ],
-            lines.slice(currentLineIndex + 1)
-          )
-          .join("\n");
+          newValue = lines
+            .slice(0, currentLineIndex)
+            .concat(
+              [e.shiftKey ? currentLine.slice(2) : " ".repeat(2) + currentLine],
+              lines.slice(currentLineIndex + 1)
+            )
+            .join("\n");
+
+          selectionStart = textarea.selectionStart + (e.shiftKey ? -2 : 2);
+          selectionEnd = textarea.selectionEnd + (e.shiftKey ? -2 : 2);
+        } else if (e.key === "Enter") {
+          // only set enter true if value gets changed by this listener
+          preventTextfieldSave = true;
+          e.preventDefault();
+
+          const indentLength = currentLine.length - trimmedCurrentLine.length;
+
+          let newListStartString = listStartString;
+          if (numberedList) {
+            newListStartString =
+              Number(listStartString.slice(0, -1)) +
+              1 +
+              "." +
+              (hasSpace ? " " : "");
+          }
+
+          newValue = lines
+            .slice(0, currentLineIndex)
+            .concat(
+              [
+                currentLine.slice(0, temp),
+                " ".repeat(indentLength) +
+                  newListStartString +
+                  currentLine.slice(temp),
+              ],
+              !numberedList
+                ? lines.slice(currentLineIndex + 1)
+                : incrementNumberedList(lines.slice(currentLineIndex + 1))
+            )
+            .join("\n");
+
+          selectionStart =
+            // current position + indetation + list string + new line
+            textarea.selectionStart +
+            indentLength +
+            newListStartString.length +
+            1;
+          selectionEnd =
+            textarea.selectionEnd +
+            indentLength +
+            newListStartString.length +
+            1;
+        }
 
         const eleId = getId(element);
         notes.find(({ id }) => id == eleId).note = newValue;
 
         setStorageNotes();
-        const selectionStart = textarea.selectionStart + indentLength;
-        const selectionEnd = textarea.selectionEnd + indentLength;
 
         textarea.value = newValue;
 
         resizeTextarea(textarea);
 
         requestAnimationFrame(() => {
-          textarea.selectionEnd = selectionEnd + listStartString.length + 1;
-          textarea.selectionStart = selectionStart + listStartString.length + 1;
+          textarea.selectionEnd = selectionEnd;
+          textarea.selectionStart = selectionStart;
         });
       }
     });
@@ -263,6 +333,25 @@ async function notepadInit() {
     if (index === -1) return;
     notes.splice(index, 1);
     setStorageValue({ notes });
+  }
+
+  function incrementNumberedList(lines) {
+    let listEnded = false;
+    return lines.map((line) => {
+      if (listEnded) return line;
+      const start = line.match(/[1-9][0-9]*\./)?.["0"];
+      if (!start) {
+        listEnded = true;
+        return line;
+      }
+      line =
+        " ".repeat(line.length - line.trimStart().length) +
+        (Number(start.slice(0, -1)) + 1) +
+        "." +
+        line.trimStart().slice(start.length);
+
+      return line;
+    });
   }
 
   // global change listener
