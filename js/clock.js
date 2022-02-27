@@ -41,8 +41,9 @@ async function clockInit() {
 
     if (clockFormat === "am/pm") {
       const ampmEle = clock.querySelector(".ampm");
-      const am = now.getHours() > 0 && now.getHours() < 13;
-      hours = (now.getHours() + 24 - (am ? 0 : 12)) % 24;
+      const am = now.getHours() >= 0 && now.getHours() < 12;
+      // +1 and -1 to not have 12pm and not 0pm
+      hours = ((now.getHours() + 12 - 1) % 12) + 1;
       hours = hours.toString().replace("0", "O").padStart(2, " ");
 
       ampmEle.textContent = am ? "am" : "pm";
