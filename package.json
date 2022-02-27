@@ -1,11 +1,11 @@
 {
   "name": "chrome-custom-new-tab",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "main": "index.html",
   "license": "ISC",
   "scripts": {
     "sass": "sass --watch --no-source-map ./",
-    "build": "sh build.sh"
+    "build": "sass --no-source-map ./ && sh build.sh"
   },
   "devDependencies": {},
   "dependencies": {
