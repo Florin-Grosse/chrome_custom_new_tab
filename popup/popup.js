@@ -92,14 +92,6 @@ async function popupInit() {
     });
   });
 
-  // add action in popup for darkModeFont
-  changeListener.push((changes) => {
-    if (changes.darkModeFont !== undefined)
-      document.documentElement.classList[
-        changes.darkModeFont.newValue ? "remove" : "add"
-      ]("darkFont");
-  });
-
   loadCheckboxInputs();
   loadMultipleChoiceInputs();
 
@@ -114,6 +106,60 @@ async function popupInit() {
       CSS_BACKGROUND_PREFIX +
       customBackgrounds.find((bg) => bg.id === background.currentTab).bg;
   } else header.classList.add("background" + background.currentTab);
+
+  // change text to selected language
+  function applyLanguage(lang) {
+    lang.tabs.map(
+      (
+        { title, checkboxes, multiple_choices, descriptions, subheader },
+        index
+      ) => {
+        const page = pages[index];
+        if (!page) return;
+
+        if (title) page.querySelector(".page_header").textContent = title;
+
+        if (checkboxes)
+          page
+            .querySelectorAll(".page_content>.checkbox_input span")
+            .forEach((node, i) => {
+              if (checkboxes[i] !== undefined) node.textContent = checkboxes[i];
+            });
+
+        if (multiple_choices)
+          page.querySelectorAll(".multiple_choice").forEach((node, i) => {
+            node.querySelectorAll(".checkbox_input span").forEach((node, j) => {
+              if (multiple_choices[i] && multiple_choices[i][j] !== undefined)
+                node.textContent = multiple_choices[i][j];
+            });
+          });
+
+        if (descriptions)
+          page.querySelectorAll(".description").forEach((node, i) => {
+            if (descriptions[i] !== undefined)
+              node.textContent = descriptions[i];
+          });
+
+        if (subheader)
+          page.querySelectorAll(".subheader").forEach((node, i) => {
+            if (subheader[i] !== undefined) node.textContent = subheader[i];
+          });
+      }
+    );
+  }
+
+  applyLanguage(languages[(await getStorageValue("language")).language].popup);
+
+  changeListener.push((changes) => {
+    // add action in popup for darkModeFont
+    if (changes.darkModeFont !== undefined)
+      document.documentElement.classList[
+        changes.darkModeFont.newValue ? "remove" : "add"
+      ]("darkFont");
+    // apply changed language
+    if (changes.language !== undefined)
+      applyLanguage(languages[changes.language.newValue].popup);
+  });
 }
 
 popupInit();

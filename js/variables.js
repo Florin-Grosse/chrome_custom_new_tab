@@ -65,6 +65,36 @@ const languages = {
         placeholder: "Note",
       },
     },
+    popup: {
+      tabs: [
+        {
+          title: "General",
+          checkboxes: ["Show notepad", "Light Font"],
+        },
+        {
+          title: "Search Engine",
+          multiple_choices: [
+            ["None", "DuckDuckGo", "Ecosia", "Google", "Startpage", "Qwant"],
+          ],
+        },
+        {
+          title: "Date",
+          checkboxes: ["Show Date"],
+          multiple_choices: [["dd.mm.yy", "dd/mm/yy", "mm.dd.yy", "mm/dd/yy"]],
+          subheader: ["Date Format"],
+        },
+        {
+          title: "Clock",
+          checkboxes: ["Show time", "Show seconds"],
+          multiple_choices: [["12h", "am/pm"]],
+          subheader: ["Clock Format"],
+        },
+        {
+          title: "Language",
+          descriptions: ["Updates after site reloads"],
+        },
+      ],
+    },
   },
   de: {
     name: "Deutsch",
@@ -131,6 +161,38 @@ const languages = {
       ".note>textarea": {
         placeholder: "Notiz",
       },
+    },
+    popup: {
+      tabs: [
+        {
+          title: "Allgemein",
+          checkboxes: ["Notizen anzeigen", "Helle Schrift"],
+        },
+        {
+          title: "Suchmaschine",
+          multiple_choices: [
+            ["Keine", "DuckDuckGo", "Ecosia", "Google", "Startpage", "Qwant"],
+          ],
+        },
+        {
+          title: "Datum",
+          checkboxes: ["Datum anzeigen"],
+          multiple_choices: [["TT.MM.JJ", "TT/MM/JJ", "MM.TT.JJ", "MM/TT/JJ"]],
+          subheader: ["Datumsformat"],
+        },
+        {
+          title: "Uhr",
+          checkboxes: ["Zeit anzeigen", "Sekunden anzeigen"],
+          multiple_choices: [["12h", "am/pm"]],
+          subheader: ["Uhrzeitformat"],
+        },
+        {
+          title: "Sprache",
+          descriptions: [
+            "Wird erst nach Neuladen oder erneutem Öffnen aktiviert",
+          ],
+        },
+      ],
     },
   },
 };
