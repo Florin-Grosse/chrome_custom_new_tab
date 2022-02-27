@@ -216,6 +216,7 @@ async function websitesInit() {
       websites = changes.websites.newValue;
       loadWebsites();
     }
+    if (changes.language !== undefined) language = changes.language.newValue;
   });
 
   loadWebsites();

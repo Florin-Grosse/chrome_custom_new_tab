@@ -91,7 +91,6 @@ const languages = {
         },
         {
           title: "Language",
-          descriptions: ["Updates after site reloads"],
         },
       ],
     },
@@ -188,9 +187,6 @@ const languages = {
         },
         {
           title: "Sprache",
-          descriptions: [
-            "Wird erst nach Neuladen oder erneutem Öffnen aktiviert",
-          ],
         },
       ],
     },

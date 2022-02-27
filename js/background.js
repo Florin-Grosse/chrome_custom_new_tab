@@ -485,6 +485,7 @@ async function backgroundInit() {
       loadBackground();
       updateBackgroundIcons();
     }
+    if (changes.language !== undefined) language = changes.language.newValue;
   });
 }
 
