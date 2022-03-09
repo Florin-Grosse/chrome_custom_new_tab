@@ -11,6 +11,33 @@ const listStartingStrings = [
   "°",
 ];
 
+const NOTE_ARROWS = [
+  {
+    text: "<->",
+    arrow: "↔",
+  },
+  {
+    text: "<-",
+    arrow: "←",
+  },
+  {
+    text: "->",
+    arrow: "→",
+  },
+  {
+    text: "<=>",
+    arrow: "⇔",
+  },
+  {
+    text: "<=",
+    arrow: "⇐",
+  },
+  {
+    text: "=>",
+    arrow: "⇒",
+  },
+];
+
 async function notepadInit() {
   let { notes, showNotes } = await getStorageValue(["notes", "showNotes"]);
 
@@ -145,7 +172,8 @@ async function notepadInit() {
     textarea.addEventListener("keydown", (e) => {
       // tab presses to indent or dedent lines if they are lists
       // enter with list start creates new list entry
-      if (!["Tab", "Enter"].includes(e.key)) return;
+      // space is for changing -> to →
+      if (!["Tab", "Enter", " "].includes(e.key)) return;
 
       if (e.key === "Enter") {
         // when ctrl is pressed either move to next note or create new
@@ -174,6 +202,38 @@ async function notepadInit() {
           }
         }
         if (e.shiftKey) return;
+      } else if (e.key === " ") {
+        preventTextfieldSave = true;
+        let newValue = textarea.value;
+        let selectionStart = textarea.selectionStart;
+        let selectionEnd = textarea.selectionEnd;
+        const currentText = newValue.slice(selectionStart - 3, selectionStart);
+        const arrow = NOTE_ARROWS.find(({ text }) =>
+          currentText.endsWith(text)
+        );
+
+        if (arrow) {
+          e.preventDefault();
+          newValue =
+            newValue.slice(0, selectionStart - arrow.text.length) +
+            arrow.arrow +
+            " " +
+            newValue.slice(selectionStart);
+
+          const eleId = getId(element);
+          notes.find(({ id }) => id == eleId).note = newValue;
+
+          copyTextareaContentIntoParagraph(p, textarea);
+          setStorageNotes();
+
+          textarea.value = newValue;
+
+          requestAnimationFrame(() => {
+            textarea.selectionEnd = selectionEnd;
+            textarea.selectionStart = selectionStart;
+          });
+        }
+        return;
       }
 
       const lines = textarea.value.split("\n");
@@ -194,9 +254,9 @@ async function notepadInit() {
         listStartingStrings.find((str) => trimmedCurrentLine.startsWith(str));
       // current line is part of a list
       if (listStartString) {
-        let newValue = "";
-        let selectionStart = 0;
-        let selectionEnd = 0;
+        let newValue = textarea.value;
+        let selectionStart = textarea.selectionStart;
+        let selectionEnd = textarea.selectionEnd;
 
         if (e.key === "Tab") {
           // trying to dedent with not indetation
