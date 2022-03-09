@@ -138,7 +138,7 @@ async function notepadInit() {
       if (preventTextfieldSave) return (preventTextfieldSave = false);
       const eleId = getId(element);
       notes.find(({ id }) => id == eleId).note = textarea.value;
-      updateTextareaParagraph(p, textarea);
+      copyTextareaContentIntoParagraph(p, textarea);
       setStorageNotes();
     });
     // eventListener for enter key to possibly add a dash to the next line
@@ -263,7 +263,7 @@ async function notepadInit() {
         const eleId = getId(element);
         notes.find(({ id }) => id == eleId).note = newValue;
 
-        updateTextareaParagraph(p, textarea);
+        copyTextareaContentIntoParagraph(p, textarea);
         setStorageNotes();
 
         textarea.value = newValue;
@@ -301,7 +301,7 @@ async function notepadInit() {
 
     const existingNote = notes.find((note) => note.id === id);
     textarea.value = note || existingNote ? existingNote.note : "";
-    updateTextareaParagraph(p, textarea);
+    copyTextareaContentIntoParagraph(p, textarea);
     // title can be undefined since it was added with version 1.3.4
     input.value = title || existingNote ? existingNote.title || "" : "";
     textarea.style.height = "0";
@@ -317,7 +317,7 @@ async function notepadInit() {
       });
   }
 
-  function updateTextareaParagraph(p, textarea) {
+  function copyTextareaContentIntoParagraph(p, textarea) {
     let text = textarea.value;
     const urlMatch =
       /\b((https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]\.[-A-Z0-9+&@#\/%=~_|]+)/gi;
