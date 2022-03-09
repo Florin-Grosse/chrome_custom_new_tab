@@ -91,7 +91,6 @@ async function notepadInit() {
           id !== focused
         ) {
           current.textarea.value = note;
-          resizeTextarea(current.textarea);
 
           current.input.value = title || "";
         }
@@ -107,18 +106,6 @@ async function notepadInit() {
       });
   }
 
-  // resize textarea to correct height to not scroll
-  function resizeTextarea(textarea) {
-    // update height of textarea
-    textarea.style.height = "0";
-    textarea.style.height = textarea.scrollHeight + "px";
-    // when deleting everything at once
-    requestAnimationFrame(() => {
-      textarea.style.height = "0";
-      textarea.style.height = textarea.scrollHeight + "px";
-    });
-  }
-
   // get id of a note DOM element
   function getId(element) {
     return Number(element.getAttribute("noteid"));
@@ -128,13 +115,16 @@ async function notepadInit() {
   function addNote(id, note = "", title = "", autofocus = false) {
     const element = noteTemplate.content.cloneNode(true).children[0];
     const textarea = element.querySelector("textarea");
+    const p = element.querySelector("p");
     const input = element.querySelector("input");
     element.setAttribute("noteid", id);
     textarea.addEventListener("focus", () => {
+      p.classList.add("focused");
       preventTextfieldSave = false;
       focused = getId(element);
     });
     textarea.addEventListener("blur", (e) => {
+      p.classList.remove("focused");
       preventTextfieldSave = false;
       // switch from note textarea to title input
       if (e.relatedTarget === input) return;
@@ -148,7 +138,7 @@ async function notepadInit() {
       if (preventTextfieldSave) return (preventTextfieldSave = false);
       const eleId = getId(element);
       notes.find(({ id }) => id == eleId).note = textarea.value;
-      resizeTextarea(textarea);
+      updateTextareaParagraph(p, textarea);
       setStorageNotes();
     });
     // eventListener for enter key to possibly add a dash to the next line
@@ -273,11 +263,10 @@ async function notepadInit() {
         const eleId = getId(element);
         notes.find(({ id }) => id == eleId).note = newValue;
 
+        updateTextareaParagraph(p, textarea);
         setStorageNotes();
 
         textarea.value = newValue;
-
-        resizeTextarea(textarea);
 
         requestAnimationFrame(() => {
           textarea.selectionEnd = selectionEnd;
@@ -312,6 +301,7 @@ async function notepadInit() {
 
     const existingNote = notes.find((note) => note.id === id);
     textarea.value = note || existingNote ? existingNote.note : "";
+    updateTextareaParagraph(p, textarea);
     // title can be undefined since it was added with version 1.3.4
     input.value = title || existingNote ? existingNote.title || "" : "";
     textarea.style.height = "0";
@@ -327,7 +317,43 @@ async function notepadInit() {
       });
   }
 
-  // deletes a node from notes and updates storage
+  function updateTextareaParagraph(p, textarea) {
+    let text = textarea.value;
+    const urlMatch =
+      /\b((https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]\.[-A-Z0-9+&@#\/%=~_|]+)/gi;
+    const urls = text.match(urlMatch) || [];
+    const nodes = [];
+    urls.forEach((url) => {
+      const index = text.search(url);
+      nodes.push(text.slice(0, index));
+      text = text.slice(index + url.length);
+
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.innerText = url;
+      nodes.push(link);
+    });
+    nodes.push(text);
+
+    // remove every but the first child (textarea)
+    while (p.lastChild !== textarea) p.removeChild(p.lastChild);
+
+    nodes.forEach((node) => {
+      if (typeof node !== "string") return p.append(node);
+      const texts = node.split("\n");
+      texts.forEach((text, index) => {
+        if (index !== 0) p.append(document.createElement("br"));
+        p.append(text);
+      });
+    });
+  }
+
+  // removes all children of an element
+  function removeChildren(ele) {
+    while (ele.firstChild) ele.removeChild(ele.firstChild);
+  }
+
+  // deletes a note from notes and updates storage
   function deleteNote(id) {
     const index = notes.findIndex((note) => note.id === id);
     if (index === -1) return;

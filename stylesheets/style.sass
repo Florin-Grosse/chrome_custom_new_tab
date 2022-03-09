@@ -397,17 +397,43 @@ body
             top: calc(var(--border-radius) * 1.5)
             left: calc(var(--border-radius) * 1.5)
 
-    textarea
-        resize: none
+    .textfield_wrapper
+        position: relative
+
+    textarea, p
         width: 100%
         min-height: 4rem
-        max-height: 40vh
-        border: none
-        outline: none
         color: var(--text)
         padding: calc(var(--border-radius) * 1.5)
         line-height: 1.25rem
         background: transparent
+        margin: 0
+        border: none
+        outline: none
+        font-size: 1em
+
+    p a
+        position: absolute
+        margin-left: .25em
+
+    p.focused
+        color: transparent
+        text-decoration-color: var(--text)
+        &>*:not(textarea)
+            &:not(a)
+                visibility: hidden
+            color: transparent
+            text-decoration-color: var(--text)
+
+    textarea
+        position: absolute
+        top: 0
+        left: 0
+        height: 100%
+        width: 100%
+        resize: none
+        &:not(:focus)
+            opacity: 0
 
     @media (orientation: landscape)
         margin-left: 5vw
