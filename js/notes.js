@@ -170,6 +170,14 @@ async function notepadInit() {
     });
     // eventListener for enter key to possibly add a dash to the next line
     textarea.addEventListener("keydown", (e) => {
+      // when selecting a region and replacing or deleting it not input event gets fired ->
+      if (textarea.selectionStart !== textarea.selectionEnd)
+        return requestAnimationFrame(() => {
+          copyTextareaContentIntoParagraph(p, textarea);
+          const eleId = getId(element);
+          notes.find(({ id }) => id == eleId).note = textarea.value;
+          setStorageNotes();
+        });
       // tab presses to indent or dedent lines if they are lists
       // enter with list start creates new list entry
       // space is for changing -> to →
@@ -223,10 +231,9 @@ async function notepadInit() {
           const eleId = getId(element);
           notes.find(({ id }) => id == eleId).note = newValue;
 
+          textarea.value = newValue;
           copyTextareaContentIntoParagraph(p, textarea);
           setStorageNotes();
-
-          textarea.value = newValue;
 
           requestAnimationFrame(() => {
             textarea.selectionEnd = selectionEnd;
@@ -323,10 +330,9 @@ async function notepadInit() {
         const eleId = getId(element);
         notes.find(({ id }) => id == eleId).note = newValue;
 
+        textarea.value = newValue;
         copyTextareaContentIntoParagraph(p, textarea);
         setStorageNotes();
-
-        textarea.value = newValue;
 
         requestAnimationFrame(() => {
           textarea.selectionEnd = selectionEnd;
@@ -364,10 +370,6 @@ async function notepadInit() {
     copyTextareaContentIntoParagraph(p, textarea);
     // title can be undefined since it was added with version 1.3.4
     input.value = title || existingNote ? existingNote.title || "" : "";
-    textarea.style.height = "0";
-    requestAnimationFrame(() => {
-      textarea.style.height = textarea.scrollHeight + "px";
-    });
 
     wrapper.insertBefore(element, addNoteButton);
 
@@ -377,6 +379,7 @@ async function notepadInit() {
       });
   }
 
+  const link_template = document.getElementById("note_link_template");
   function copyTextareaContentIntoParagraph(p, textarea) {
     let text = textarea.value;
     const urlMatch =
@@ -388,7 +391,7 @@ async function notepadInit() {
       nodes.push(text.slice(0, index));
       text = text.slice(index + url.length);
 
-      const link = document.createElement("a");
+      const link = link_template.content.cloneNode(true).children[0];
       link.setAttribute("href", url);
       link.innerText = url;
       nodes.push(link);
@@ -406,11 +409,27 @@ async function notepadInit() {
         p.append(text);
       });
     });
+
+    // add padding to bottom when last line is empty since p doesn't grow otherwise
+    if (
+      p.lastChild.nodeName === "#text" &&
+      p.lastChild.textContent === "" &&
+      p.lastChild.previousSibling &&
+      p.lastChild.previousSibling.nodeName === "BR"
+    )
+      p.style.paddingBottom = "calc(var(--border-radius) * 1.5 + 1.25rem)";
+    else p.style.paddingBottom = null;
   }
 
   // removes all children of an element
   function removeChildren(ele) {
     while (ele.firstChild) ele.removeChild(ele.firstChild);
+  }
+
+  function convertRemToPixels(rem) {
+    return (
+      rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
+    );
   }
 
   // deletes a note from notes and updates storage

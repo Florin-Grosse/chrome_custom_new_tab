@@ -263,7 +263,7 @@ const defaultStorageValues = {
   darkModeFont: true,
   dateFormat: "default",
   language: "en",
-  notes: [{ title: "", note: "" }],
+  notes: [{ title: "", note: "", id: 1 }],
   searchEngine: "duck",
   showDate: true,
   showNotes: true,
