@@ -254,11 +254,17 @@ async function notepadInit() {
         currentLineIndex === -1 ? "" : lines[currentLineIndex];
 
       const trimmedCurrentLine = currentLine.trimStart();
-      const hasSpace = trimmedCurrentLine.match(/[1-9][0-9]*\.\s/) !== null;
-      const numberedList = trimmedCurrentLine.match(/[1-9][0-9]*\./)?.["0"];
+      let hasSpace = trimmedCurrentLine.match(/[1-9][0-9]*\.\s/) !== null;
+      let numberedList = trimmedCurrentLine.match(/[1-9][0-9]*\./)?.["0"];
+      // when a match was found in the middle of the line
+      if (!trimmedCurrentLine.startsWith(numberedList)) numberedList = null;
+      else if (hasSpace && !trimmedCurrentLine.startsWith(numberedList + " "))
+        hasSpace = false;
+
       const listStartString =
         numberedList ||
         listStartingStrings.find((str) => trimmedCurrentLine.startsWith(str));
+
       // current line is part of a list
       if (listStartString) {
         let newValue = textarea.value;
@@ -434,13 +440,12 @@ async function notepadInit() {
     });
     // add padding to bottom when last line is empty since p doesn't grow otherwise
     if (
-      text_wrapper.lastChild.nodeName === "#text" &&
-      text_wrapper.lastChild.textContent === "" &&
+      text_wrapper.lastChild.nodeName === "SPAN" &&
+      text_wrapper.lastChild.textContent.trim() === "" &&
       text_wrapper.lastChild.previousSibling &&
       text_wrapper.lastChild.previousSibling.nodeName === "BR"
     )
-      text_wrapper.style.paddingBottom =
-        "calc(var(--border-radius) * 1.5 + 1.25rem)";
+      text_wrapper.style.paddingBottom = "1.25rem";
     else text_wrapper.style.paddingBottom = null;
   }
 
