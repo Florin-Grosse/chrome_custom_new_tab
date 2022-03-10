@@ -142,16 +142,16 @@ async function notepadInit() {
   function addNote(id, note = "", title = "", autofocus = false) {
     const element = noteTemplate.content.cloneNode(true).children[0];
     const textarea = element.querySelector("textarea");
-    const p = element.querySelector("p");
+    const text_wrapper = element.querySelector(".text_wrapper");
     const input = element.querySelector("input");
     element.setAttribute("noteid", id);
     textarea.addEventListener("focus", () => {
-      p.classList.add("focused");
+      text_wrapper.classList.add("focused");
       preventTextfieldSave = false;
       focused = getId(element);
     });
     textarea.addEventListener("blur", (e) => {
-      p.classList.remove("focused");
+      text_wrapper.classList.remove("focused");
       preventTextfieldSave = false;
       // switch from note textarea to title input
       if (e.relatedTarget === input) return;
@@ -165,7 +165,7 @@ async function notepadInit() {
       if (preventTextfieldSave) return (preventTextfieldSave = false);
       const eleId = getId(element);
       notes.find(({ id }) => id == eleId).note = textarea.value;
-      copyTextareaContentIntoParagraph(p, textarea);
+      copyTextareaContentIntoParagraph(text_wrapper, textarea);
       setStorageNotes();
     });
     // eventListener for enter key to possibly add a dash to the next line
@@ -173,7 +173,7 @@ async function notepadInit() {
       // when selecting a region and replacing or deleting it not input event gets fired ->
       if (textarea.selectionStart !== textarea.selectionEnd)
         return requestAnimationFrame(() => {
-          copyTextareaContentIntoParagraph(p, textarea);
+          copyTextareaContentIntoParagraph(text_wrapper, textarea);
           const eleId = getId(element);
           notes.find(({ id }) => id == eleId).note = textarea.value;
           setStorageNotes();
@@ -232,7 +232,7 @@ async function notepadInit() {
           notes.find(({ id }) => id == eleId).note = newValue;
 
           textarea.value = newValue;
-          copyTextareaContentIntoParagraph(p, textarea);
+          copyTextareaContentIntoParagraph(text_wrapper, textarea);
           setStorageNotes();
 
           requestAnimationFrame(() => {
@@ -331,7 +331,7 @@ async function notepadInit() {
         notes.find(({ id }) => id == eleId).note = newValue;
 
         textarea.value = newValue;
-        copyTextareaContentIntoParagraph(p, textarea);
+        copyTextareaContentIntoParagraph(text_wrapper, textarea);
         setStorageNotes();
 
         requestAnimationFrame(() => {
@@ -339,6 +339,18 @@ async function notepadInit() {
           textarea.selectionStart = selectionStart;
         });
       }
+    });
+    // add links class when
+    textarea.addEventListener("keydown", (e) => {
+      if (e.key !== "Control") return;
+      if (!text_wrapper.classList.contains("focused")) return;
+      e.preventDefault();
+      text_wrapper.classList.add("links");
+    });
+    textarea.addEventListener("keyup", (e) => {
+      if (e.key !== "Control") return;
+      e.preventDefault();
+      text_wrapper.classList.remove("links");
     });
     // changed focused when focusing / bluring title of note
     input.addEventListener("focus", () => {
@@ -367,7 +379,7 @@ async function notepadInit() {
 
     const existingNote = notes.find((note) => note.id === id);
     textarea.value = note || existingNote ? existingNote.note : "";
-    copyTextareaContentIntoParagraph(p, textarea);
+    copyTextareaContentIntoParagraph(text_wrapper, textarea);
     // title can be undefined since it was added with version 1.3.4
     input.value = title || existingNote ? existingNote.title || "" : "";
 
@@ -380,56 +392,56 @@ async function notepadInit() {
   }
 
   const link_template = document.getElementById("note_link_template");
-  function copyTextareaContentIntoParagraph(p, textarea) {
+  function copyTextareaContentIntoParagraph(text_wrapper, textarea) {
     let text = textarea.value;
     const urlMatch =
-      /\b((https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]\.[-A-Z0-9+&@#\/%=~_|]+)/gi;
+      /\b((https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]\.[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]+)/gi;
     const urls = text.match(urlMatch) || [];
     const nodes = [];
     urls.forEach((url) => {
-      const index = text.search(url);
+      const index = text.indexOf(url);
       nodes.push(text.slice(0, index));
       text = text.slice(index + url.length);
 
       const link = link_template.content.cloneNode(true).children[0];
       link.setAttribute("href", url);
       link.innerText = url;
+      // open link in current tab instead openening in new tab
+      // ctrl is key to click link -> ctrl + middle mouse opens in new tab
+      link.addEventListener("click", (e) => {
+        if (text_wrapper.classList.contains("links")) {
+          e.preventDefault();
+          window.location.href = url;
+        }
+      });
       nodes.push(link);
     });
     nodes.push(text);
 
     // remove every but the first child (textarea)
-    while (p.lastChild !== textarea) p.removeChild(p.lastChild);
+    while (text_wrapper.lastChild !== textarea)
+      text_wrapper.removeChild(text_wrapper.lastChild);
 
     nodes.forEach((node) => {
-      if (typeof node !== "string") return p.append(node);
+      if (typeof node !== "string") return text_wrapper.append(node);
       const texts = node.split("\n");
       texts.forEach((text, index) => {
-        if (index !== 0) p.append(document.createElement("br"));
-        p.append(text);
+        if (index !== 0) text_wrapper.append(document.createElement("br"));
+        const span = document.createElement("span");
+        span.innerText = text;
+        text_wrapper.append(span);
       });
     });
-
     // add padding to bottom when last line is empty since p doesn't grow otherwise
     if (
-      p.lastChild.nodeName === "#text" &&
-      p.lastChild.textContent === "" &&
-      p.lastChild.previousSibling &&
-      p.lastChild.previousSibling.nodeName === "BR"
+      text_wrapper.lastChild.nodeName === "#text" &&
+      text_wrapper.lastChild.textContent === "" &&
+      text_wrapper.lastChild.previousSibling &&
+      text_wrapper.lastChild.previousSibling.nodeName === "BR"
     )
-      p.style.paddingBottom = "calc(var(--border-radius) * 1.5 + 1.25rem)";
-    else p.style.paddingBottom = null;
-  }
-
-  // removes all children of an element
-  function removeChildren(ele) {
-    while (ele.firstChild) ele.removeChild(ele.firstChild);
-  }
-
-  function convertRemToPixels(rem) {
-    return (
-      rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
-    );
+      text_wrapper.style.paddingBottom =
+        "calc(var(--border-radius) * 1.5 + 1.25rem)";
+    else text_wrapper.style.paddingBottom = null;
   }
 
   // deletes a note from notes and updates storage

@@ -379,8 +379,7 @@ body
     flex-direction: column
     display: none
     .note
-        width: 30vw
-        margin: .5rem
+        margin: .5rem 0
         background: var(--bg-transparent)
         transition: box-shadow .25s ease-in-out
         border-radius: var(--border-radius)
@@ -399,38 +398,58 @@ body
 
     .textfield_wrapper
         position: relative
+        z-index: 0
+        padding: calc(var(--border-radius) * 1.5)
 
-    textarea, p
-        width: 100%
+    textarea, .text_wrapper
+        width: 30vw
         min-height: 4rem
         color: var(--text)
-        padding: calc(var(--border-radius) * 1.5)
         line-height: 1.25rem
         background: transparent
         margin: 0
+        padding: 0
         border: none
         outline: none
         font-size: 1em
+        z-index: 0
+        position: relative
 
-    p.focused
-        color: transparent
-        text-decoration-color: var(--text)
-        &>*:not(textarea)
-            &:not(a)
-                visibility: hidden
+    .text_wrapper
+        display: inline-block
+
+        a
+            overflow-wrap: break-word
+
+        &>*:not(textarea):not(a)
+            pointer-events: none
+
+        &.focused
             color: transparent
             text-decoration-color: var(--text)
+            &>*:not(textarea)
+                &:not(a)
+                    visibility: hidden
+                    pointer-events: none
+                color: transparent
+                text-decoration-color: var(--text)
+        &:not(.focused)
+            textarea
+                color: transparent
+            a
+                z-index: 1
+                position: relative
+        &.links a
+                z-index: 1
+                position: relative
 
     textarea
         position: absolute
         top: 0
         left: 0
         height: 100%
-        width: 100%
         resize: none
         overflow: hidden
-        &:not(:focus)
-            opacity: 0
 
     @media (orientation: landscape)
         margin-left: 5vw
