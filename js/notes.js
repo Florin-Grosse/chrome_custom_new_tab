@@ -4,11 +4,13 @@ const listStartingStrings = [
   ". ",
   "~ ",
   "° ",
+  "→ ",
   "-",
   "*",
   ".",
   "~",
   "°",
+  "→",
 ];
 
 const NOTE_ARROWS = [
@@ -149,8 +151,10 @@ async function notepadInit() {
       text_wrapper.classList.add("focused");
       preventTextfieldSave = false;
       focused = getId(element);
+      textarea.setAttribute("spellcheck", "true");
     });
     textarea.addEventListener("blur", (e) => {
+      textarea.setAttribute("spellcheck", "false");
       text_wrapper.classList.remove("focused");
       preventTextfieldSave = false;
       // switch from note textarea to title input
@@ -170,8 +174,12 @@ async function notepadInit() {
     });
     // eventListener for enter key to possibly add a dash to the next line
     textarea.addEventListener("keydown", (e) => {
-      // when selecting a region and replacing or deleting it not input event gets fired ->
-      if (textarea.selectionStart !== textarea.selectionEnd)
+      // when selecting a region and replacing or deleting it not input event gets fired
+      // but not when user trying to move lines with alt + arrow keys
+      if (
+        textarea.selectionStart !== textarea.selectionEnd &&
+        !(["ArrowUp", "ArrowDown"].includes(e.key) && e.altKey)
+      )
         return requestAnimationFrame(() => {
           copyTextareaContentIntoParagraph(text_wrapper, textarea);
           const eleId = getId(element);
@@ -181,7 +189,13 @@ async function notepadInit() {
       // tab presses to indent or dedent lines if they are lists
       // enter with list start creates new list entry
       // space is for changing -> to →
-      if (!["Tab", "Enter", " "].includes(e.key)) return;
+      // alt + arrow up/down switches lines
+      if (
+        !["Tab", "Enter", " "].includes(e.key) &&
+        // listener for alt + arrow keys switch lines
+        (!e.altKey || !["ArrowDown", "ArrowUp"].includes(e.key))
+      )
+        return;
 
       if (e.key === "Enter") {
         // when ctrl is pressed either move to next note or create new
@@ -211,17 +225,20 @@ async function notepadInit() {
         }
         if (e.shiftKey) return;
       } else if (e.key === " ") {
-        preventTextfieldSave = true;
         let newValue = textarea.value;
         let selectionStart = textarea.selectionStart;
         let selectionEnd = textarea.selectionEnd;
-        const currentText = newValue.slice(selectionStart - 3, selectionStart);
+        const currentText = newValue.slice(
+          Math.max(selectionStart - 3, 0),
+          selectionStart
+        );
         const arrow = NOTE_ARROWS.find(({ text }) =>
           currentText.endsWith(text)
         );
 
         if (arrow) {
           e.preventDefault();
+          preventTextfieldSave = true;
           newValue =
             newValue.slice(0, selectionStart - arrow.text.length) +
             arrow.arrow +
@@ -240,6 +257,96 @@ async function notepadInit() {
             textarea.selectionStart = selectionStart;
           });
         }
+        return;
+      } else if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+        e.preventDefault();
+        const goUp = e.key === "ArrowUp";
+
+        const lines = textarea.value.split("\n");
+        const textareaSelectionStart = textarea.selectionStart;
+        const textareaSelectionEnd = textarea.selectionEnd;
+        const { startLine, endLine } = lines.reduce(
+          ({ startLine, endLine, sum }, line, index) => {
+            // add new line length to sum
+            const start = sum + 1;
+            const end = start + line.length;
+            // if selection start is in this line
+            if (
+              textareaSelectionStart >= start &&
+              textareaSelectionStart <= end
+            ) {
+              startLine = index;
+            }
+            // if selection end is in this line
+            if (textareaSelectionEnd >= start && textareaSelectionEnd <= end) {
+              endLine = index;
+            }
+            return { startLine, endLine, sum: end };
+          },
+          {
+            startLine: -1,
+            endLine: -1,
+            sum: -1,
+          }
+        );
+
+        const nextLineIndex = goUp ? startLine - 1 : endLine + 1;
+        // if next line is out of bounds
+        if (nextLineIndex < 0 || nextLineIndex >= lines.length) return;
+        const nextLine = lines[nextLineIndex];
+
+        const middleLines = lines.slice(startLine, endLine + 1);
+        const linesBefore = lines.slice(0, goUp ? startLine - 1 : startLine);
+        const linesAfter = lines.slice(goUp ? endLine + 1 : endLine + 2);
+
+        let newSelectionStart = textareaSelectionStart,
+          newSelectionEnd = textareaSelectionEnd;
+
+        let newLines = lines;
+
+        // if shift is pressed, copy selected lines
+        if (e.shiftKey) {
+          const newMiddleLines = [...middleLines, ...middleLines];
+          if (goUp) newMiddleLines.unshift(nextLine);
+          else newMiddleLines.push(nextLine);
+          newLines = [...linesBefore, ...newMiddleLines, ...linesAfter];
+
+          if (!goUp) {
+            newSelectionStart += middleLines.reduce(
+              (sum, line) => sum + line.length + 1,
+              0
+            );
+            newSelectionEnd += middleLines.reduce(
+              (sum, line) => sum + line.length + 1,
+              0
+            );
+          }
+        } else {
+          const newMiddleLines = goUp
+            ? [...middleLines, nextLine]
+            : [nextLine, ...middleLines];
+          newLines = [...linesBefore, ...newMiddleLines, ...linesAfter];
+
+          newSelectionStart += goUp
+            ? -nextLine.length - 1
+            : nextLine.length + 1;
+          newSelectionEnd += goUp ? -nextLine.length - 1 : nextLine.length + 1;
+        }
+
+        const newValue = newLines.join("\n");
+
+        const eleId = getId(element);
+        notes.find(({ id }) => id == eleId).note = newValue;
+
+        textarea.value = newValue;
+
+        copyTextareaContentIntoParagraph(text_wrapper, textarea);
+        setStorageNotes();
+        requestAnimationFrame(() => {
+          textarea.selectionEnd = newSelectionEnd;
+          textarea.selectionStart = newSelectionStart;
+        });
+
         return;
       }
 

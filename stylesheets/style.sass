@@ -12,6 +12,8 @@ body
     background-position: center center
     background-size: cover
     background: #3d3d3d
+    @media (prefers-color-scheme: light)
+        background: #999
 
 #content_wrapper
     --padding: 5vmin
@@ -417,6 +419,9 @@ body
 
     .text_wrapper
         display: inline-block
+
+        &>span, &>a
+            white-space: pre
 
         a
             overflow-wrap: break-word
