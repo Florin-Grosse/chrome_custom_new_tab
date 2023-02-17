@@ -41,7 +41,11 @@ const NOTE_ARROWS = [
 ];
 
 async function notepadInit() {
-  let { notes, showNotes } = await getStorageValue(["notes", "showNotes"]);
+  let { notes, showNotes, collapseNotes } = await getStorageValue([
+    "notes",
+    "showNotes",
+    "collapseNotes",
+  ]);
 
   const noteTemplate = document.getElementById("note_template");
   const wrapper = document.getElementById("notepad");
@@ -146,12 +150,14 @@ async function notepadInit() {
     const textarea = element.querySelector("textarea");
     const text_wrapper = element.querySelector(".text_wrapper");
     const input = element.querySelector("input");
+    const collapse_button = element.querySelector(".collapse_note");
     element.setAttribute("noteid", id);
     textarea.addEventListener("focus", () => {
       text_wrapper.classList.add("focused");
       preventTextfieldSave = false;
       focused = getId(element);
       textarea.setAttribute("spellcheck", "true");
+      collapse(false);
     });
     textarea.addEventListener("blur", (e) => {
       textarea.setAttribute("spellcheck", "false");
@@ -163,6 +169,11 @@ async function notepadInit() {
       if (textarea.value === "" && input.value === "" && notes.length > 1) {
         deleteNote(getId(element));
       }
+
+      // collapse if collapseNotes is true
+      // don't collapse if not is deleted
+      // don't collapse if new focus is title input -> already checked in "if (e.relatedTarget === input) return;"
+      else if (collapseNotes) collapse(true);
     });
     // update storage on change
     textarea.addEventListener("input", () => {
@@ -468,13 +479,25 @@ async function notepadInit() {
     // changed focused when focusing / bluring title of note
     input.addEventListener("focus", () => {
       focused = getId(element);
+      // remove collapse class to "preview" note while editing title
+      element.classList.remove("collapsed");
     });
     input.addEventListener("blur", (e) => {
+      const id = getId(element);
+      const existingNote = notes.find((note) => note.id === id);
+      // if collapsed is true, collapse note
+      // note is currently not collapsed since it is "previewed" while editing title
+      // when textarea is focused after the input, don't collapse
+      if (
+        e.relatedTarget !== textarea &&
+        (collapseNotes || existingNote.collapsed)
+      )
+        element.classList.add("collapsed");
       // switch from title input to note textarea
       if (e.relatedTarget === textarea) return;
       focused = -1;
       if (textarea.value === "" && input.value === "" && notes.length > 1) {
-        deleteNote(getId(element));
+        deleteNote(id);
       }
     });
     // focus textarea on title enter keypress
@@ -489,12 +512,18 @@ async function notepadInit() {
       notes.find(({ id }) => id == eleId).title = input.value;
       setStorageNotes();
     });
+    // collapse / expand note
+    collapse_button.addEventListener("click", () => {
+      collapse();
+    });
 
     const existingNote = notes.find((note) => note.id === id);
     textarea.value = note || existingNote ? existingNote.note : "";
     copyTextareaContentIntoParagraph(text_wrapper, textarea);
     // title can be undefined since it was added with version 1.3.4
     input.value = title || existingNote ? existingNote.title || "" : "";
+    if (existingNote.collapsed || collapseNotes)
+      element.classList.add("collapsed");
 
     wrapper.insertBefore(element, addNoteButton);
 
@@ -502,6 +531,18 @@ async function notepadInit() {
       requestAnimationFrame(() => {
         input.focus();
       });
+
+    function collapse(collapsed) {
+      const eleId = getId(element);
+      const existsingNote = notes.find(({ id }) => id == eleId);
+      if (collapsed === undefined) collapsed = !existsingNote.collapsed;
+      if (collapsed) element.classList.add("collapsed");
+      else element.classList.remove("collapsed");
+
+      // change state
+      existsingNote.collapsed = collapsed;
+      setStorageNotes();
+    }
   }
 
   const link_template = document.getElementById("note_link_template");

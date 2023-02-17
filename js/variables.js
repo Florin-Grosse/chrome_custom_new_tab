@@ -69,7 +69,7 @@ const languages = {
       tabs: [
         {
           title: "General",
-          checkboxes: ["Show notepad", "Light Font"],
+          checkboxes: ["Show notepad", "Auto-collapse notes", "Light Font"],
         },
         {
           title: "Search Engine",
@@ -165,7 +165,11 @@ const languages = {
       tabs: [
         {
           title: "Allgemein",
-          checkboxes: ["Notizen anzeigen", "Helle Schrift"],
+          checkboxes: [
+            "Notizen anzeigen",
+            "Notizen automatisch verstecken",
+            "Helle Schrift",
+          ],
         },
         {
           title: "Suchmaschine",

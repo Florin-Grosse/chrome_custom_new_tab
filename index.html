@@ -106,7 +106,16 @@
         <div id="notepad">
           <template id="note_template">
             <div class="note">
-              <input placeholder="Title" />
+              <div class="note_input_wrapper">
+                <input placeholder="Title" />
+                <button class="collapse_note" tabindex="-1">
+                  <svg focusable="false" viewBox="0 0 24 24">
+                    <path
+                      d="m12 8-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
               <div class="textfield_wrapper">
                 <div class="text_wrapper">
                   <textarea placeholder="Note"></textarea>

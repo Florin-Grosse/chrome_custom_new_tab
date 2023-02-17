@@ -9,10 +9,14 @@ async function popupInit() {
       //  fill with html
       const elements = checkbox_template.content.cloneNode(true).children;
       Array.from({ length: elements.length }).forEach(() => {
+        // with append the elements will be removed from the template
+        // so we always have to take the first element
         checkbox.appendChild(elements[0]);
       });
       checkbox.querySelector("span").textContent =
         checkbox.getAttribute("name");
+
+      console.log(checkbox.getAttribute("name"));
 
       // return if this checkbox is set to manual
       const id = checkbox.getAttribute("data-id");

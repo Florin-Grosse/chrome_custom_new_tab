@@ -12,6 +12,8 @@
   },
   "--clockFormat": "format of the clock, either 12h for 00:00-23:59 or am/pm for 12:00pm - 11:59pm",
   "clockFormat": "12h",
+  "--collapseNotes": "if notes get collapsed once not focused anymore",
+  "collapseNotes": false,
   "darkModeFont": true,
   "--dateFormat": "id of dateformat as in dateFormat array in variables.js",
   "dateFormat": "default",

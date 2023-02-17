@@ -385,18 +385,53 @@ body
         background: var(--bg-transparent)
         transition: box-shadow .25s ease-in-out
         border-radius: var(--border-radius)
+        width: 30vw
         &:focus, &:hover
             box-shadow: rgba(0, 0, 0, 0.3) 1px 1px 6px 2px
+        &.collapsed
+            .textfield_wrapper
+                height: 0
+                visibility: hidden
+                padding: 0
+                padding-bottom: calc(var(--border-radius) * 1.5)
+                pointer-events: none
+            .note_input_wrapper svg
+                transform: rotate(180deg)
 
-    input
+    .note_input_wrapper
         width: 100%
-        background: transparent
-        outline: none
-        border: 0
-        font-size: 1.4em
-        padding:
-            top: calc(var(--border-radius) * 1.5)
-            left: calc(var(--border-radius) * 1.5)
+        display: flex
+        align-items: center
+        input
+            width: 100%
+            background: transparent
+            outline: none
+            border: 0
+            font-size: 1.4em
+            padding:
+                top: calc(var(--border-radius) * 1.5)
+                left: calc(var(--border-radius) * 1.5)
+        button
+            margin:
+                top: calc(var(--border-radius) * 1.5)
+                right: calc(var(--border-radius) * 1.5)
+            background: transparent
+            border: 0
+            outline: none
+            cursor: pointer
+            color: var(--text)
+            border-radius: 50%
+            transition: color .25s ease-in-out, background .25s ease-in-out
+            padding: .25rem
+            svg
+                fill: currentColor
+                display: block
+                height: 1.5rem
+                width: 1.5rem
+                transition: tranform .45s ease-in-out
+            &:hover
+                color: var(--text-transparent)
+                background: var(--bg-transparent)
 
     .textfield_wrapper
         position: relative
@@ -404,7 +439,7 @@ body
         padding: calc(var(--border-radius) * 1.5)
 
     textarea, .text_wrapper
-        width: 30vw
+        width: 100%
         min-height: 4rem
         color: var(--text)
         line-height: 1.25rem
