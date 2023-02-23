@@ -124,6 +124,10 @@ async function notepadInit() {
           id !== focused
         ) {
           current.textarea.value = note;
+          copyTextareaContentIntoParagraph(
+            current.textarea.parentElement,
+            current.textarea
+          );
 
           current.input.value = title || "";
         }
@@ -636,6 +640,11 @@ async function notepadInit() {
         setNotesVisibility();
       }
     }
+  });
+
+  // listen to window focus to refetch notes
+  window.addEventListener("focus", () => {
+    updateNotes();
   });
 
   initNotes();
