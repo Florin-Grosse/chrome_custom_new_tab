@@ -201,6 +201,49 @@ async function notepadInit() {
           notes.find(({ id }) => id == eleId).note = textarea.value;
           setStorageNotes();
         });
+
+      // change behavior of ctrl + x and ctrl + c -> copy and cut entire line, when no text is selected
+      if (
+        e.ctrlKey &&
+        ["x", "c"].includes(e.key) &&
+        textarea.selectionStart === textarea.selectionEnd
+      ) {
+        const { selectionStart } = textarea;
+        // -1 since selectionStart is index of first character after cursor and lastIndexOf treats position argument as greater or equal
+        const lineStart = textarea.value.lastIndexOf("\n", selectionStart - 1);
+        const lineEnd = textarea.value.indexOf("\n", selectionStart);
+        const line = textarea.value.substring(
+          lineStart + 1,
+          lineEnd === -1 ? textarea.value.length : lineEnd
+        );
+        // copy line to clipboard
+        if (e.key === "c") {
+          e.preventDefault();
+          navigator.clipboard.writeText(line);
+        }
+        // cut line
+        else if (e.key === "x") {
+          e.preventDefault();
+          let valueBefore = textarea.value.substring(0, lineStart + 1);
+          let valueAfter = textarea.value.substring(
+            lineEnd === -1 ? textarea.value.length : lineEnd
+          );
+          // remove line break before or after line (can have none, one or two -> first and/or last line)
+          if (valueBefore.endsWith("\n"))
+            valueBefore = valueBefore.slice(0, -1);
+          else if (valueAfter.startsWith("\n"))
+            valueAfter = valueAfter.slice(1);
+          textarea.value = valueBefore + valueAfter;
+          textarea.selectionStart = textarea.selectionEnd = lineStart + 1;
+          copyTextareaContentIntoParagraph(text_wrapper, textarea);
+          const eleId = getId(element);
+          notes.find(({ id }) => id == eleId).note = textarea.value;
+          setStorageNotes();
+          navigator.clipboard.writeText(line);
+        }
+        return;
+      }
+
       // tab presses to indent or dedent lines if they are lists
       // enter with list start creates new list entry
       // space is for changing -> to →
