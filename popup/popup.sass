@@ -9,6 +9,7 @@ $height: 24rem
 body
   width: 18rem
   height: $height
+  min-height: 100vh
   margin: 0
   color: var(--uni-text)
   background: var(--uni-bg-2)
@@ -30,7 +31,7 @@ body
   z-index: 1
   overflow: hidden
   flex: 1 0 auto
-  max-height: calc(#{$height} - 3rem)
+  max-height: max(calc(#{$height} - 3rem), calc(100vh - 3rem))
   position: relative
   .page
     width: 100%

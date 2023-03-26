@@ -40,6 +40,33 @@ const NOTE_ARROWS = [
   },
 ];
 
+const NOTE_SELECTION_WRAPPERS = [
+  {
+    start: "(",
+    end: ")",
+  },
+  {
+    start: "{",
+    end: "}",
+  },
+  {
+    start: "[",
+    end: "]",
+  },
+  {
+    start: "'",
+    end: "'",
+  },
+  {
+    start: "`",
+    end: "`",
+  },
+  {
+    start: '"',
+    end: '"',
+  },
+];
+
 async function notepadInit() {
   let { notes, showNotes, collapseNotes } = await getStorageValue([
     "notes",
@@ -181,7 +208,10 @@ async function notepadInit() {
     });
     // update storage on change
     textarea.addEventListener("input", () => {
-      if (preventTextfieldSave) return (preventTextfieldSave = false);
+      if (preventTextfieldSave) {
+        console.log("reset prevent save");
+        return (preventTextfieldSave = false);
+      }
       const eleId = getId(element);
       notes.find(({ id }) => id == eleId).note = textarea.value;
       copyTextareaContentIntoParagraph(text_wrapper, textarea);
@@ -189,11 +219,15 @@ async function notepadInit() {
     });
     // eventListener for enter key to possibly add a dash to the next line
     textarea.addEventListener("keydown", (e) => {
-      // when selecting a region and replacing or deleting it not input event gets fired
-      // but not when user trying to move lines with alt + arrow keys
+      preventTextfieldSave = false;
+      // when selecting a region and replacing or deleting it no input event gets fired
+      // but not when user tries to move lines with alt + arrow keys
       if (
         textarea.selectionStart !== textarea.selectionEnd &&
-        !(["ArrowUp", "ArrowDown"].includes(e.key) && e.altKey)
+        // move lines with alt + arrow keys
+        !(["ArrowUp", "ArrowDown"].includes(e.key) && e.altKey) &&
+        // suround with brackets or quotes
+        !NOTE_SELECTION_WRAPPERS.map((e) => e.start).includes(e.key)
       )
         return requestAnimationFrame(() => {
           copyTextareaContentIntoParagraph(text_wrapper, textarea);
@@ -201,6 +235,47 @@ async function notepadInit() {
           notes.find(({ id }) => id == eleId).note = textarea.value;
           setStorageNotes();
         });
+
+      // suround with brackets or quotes
+      if (
+        NOTE_SELECTION_WRAPPERS.map((wrapper) => wrapper.start).includes(
+          e.key
+        ) &&
+        textarea.selectionStart !== textarea.selectionEnd
+      ) {
+        e.preventDefault();
+        const wrapper = NOTE_SELECTION_WRAPPERS.find(
+          (wrapper) => wrapper.start === e.key
+        );
+        const { selectionStart, selectionEnd } = textarea;
+        const selectedText = textarea.value.substring(
+          selectionStart,
+          selectionEnd
+        );
+        const newValue =
+          textarea.value.substring(0, selectionStart) +
+          wrapper.start +
+          selectedText +
+          wrapper.end +
+          textarea.value.substring(selectionEnd);
+
+        preventTextfieldSave = true;
+
+        textarea.value = newValue;
+
+        const eleId = getId(element);
+        notes.find(({ id }) => id == eleId).note = newValue;
+
+        textarea.value = newValue;
+        copyTextareaContentIntoParagraph(text_wrapper, textarea);
+        setStorageNotes();
+
+        requestAnimationFrame(() => {
+          textarea.selectionStart = selectionStart + wrapper.start.length;
+          textarea.selectionEnd = selectionEnd + wrapper.start.length;
+        });
+        return;
+      }
 
       // change behavior of ctrl + x and ctrl + c -> copy and cut entire line, when no text is selected
       if (
@@ -281,7 +356,6 @@ async function notepadInit() {
             return;
           }
         }
-        if (e.shiftKey) return;
       } else if (e.key === " ") {
         let newValue = textarea.value;
         let selectionStart = textarea.selectionStart;
@@ -455,10 +529,6 @@ async function notepadInit() {
           selectionStart = textarea.selectionStart + (e.shiftKey ? -2 : 2);
           selectionEnd = textarea.selectionEnd + (e.shiftKey ? -2 : 2);
         } else if (e.key === "Enter") {
-          // only set enter true if value gets changed by this listener
-          preventTextfieldSave = true;
-          e.preventDefault();
-
           const indentLength = currentLine.length - trimmedCurrentLine.length;
 
           let newListStartString = listStartString;
@@ -470,32 +540,48 @@ async function notepadInit() {
               (hasSpace ? " " : "");
           }
 
-          newValue = lines
-            .slice(0, currentLineIndex)
-            .concat(
-              [
-                currentLine.slice(0, temp),
-                " ".repeat(indentLength) +
-                  newListStartString +
-                  currentLine.slice(temp),
-              ],
-              !numberedList
-                ? lines.slice(currentLineIndex + 1)
-                : incrementNumberedList(lines.slice(currentLineIndex + 1))
-            )
-            .join("\n");
+          // if current line is only list start remove list start
+          if (currentLine === listStartString && !e.shiftKey) {
+            newValue = [
+              ...lines.slice(0, currentLineIndex),
+              currentLine.slice(0, -listStartString.length),
+              ...lines.slice(currentLineIndex + 1),
+            ].join("\n");
+            selectionStart -= listStartString.length;
+            selectionEnd -= listStartString.length;
+          } else {
+            if (currentLine !== listStartString && e.shiftKey) return;
+            newValue = lines
+              .slice(0, currentLineIndex)
+              .concat(
+                [
+                  currentLine.slice(0, temp),
+                  " ".repeat(indentLength) +
+                    newListStartString +
+                    currentLine.slice(temp),
+                ],
+                !numberedList
+                  ? lines.slice(currentLineIndex + 1)
+                  : incrementNumberedList(lines.slice(currentLineIndex + 1))
+              )
+              .join("\n");
 
-          selectionStart =
-            // current position + indetation + list string + new line
-            textarea.selectionStart +
-            indentLength +
-            newListStartString.length +
-            1;
-          selectionEnd =
-            textarea.selectionEnd +
-            indentLength +
-            newListStartString.length +
-            1;
+            selectionStart =
+              // current position + indetation + list string + new line
+              textarea.selectionStart +
+              indentLength +
+              newListStartString.length +
+              1;
+            selectionEnd =
+              textarea.selectionEnd +
+              indentLength +
+              newListStartString.length +
+              1;
+          }
+
+          // only set enter true if value gets changed by this listener
+          preventTextfieldSave = true;
+          e.preventDefault();
         }
 
         const eleId = getId(element);
@@ -509,6 +595,8 @@ async function notepadInit() {
           textarea.selectionEnd = selectionEnd;
           textarea.selectionStart = selectionStart;
         });
+
+        return;
       }
     });
     // add links class when
