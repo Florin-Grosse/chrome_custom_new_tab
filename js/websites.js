@@ -309,6 +309,21 @@ async function websitesInit() {
     });
   }
   addContextMenuEventListener();
+
+  /*--- keyboard shortcut for opening websites ---*/
+  function addKeyboardShortcuts() {
+    document.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")
+        return;
+      const numberPressed = parseInt(e.key);
+      if (e.ctrlKey && !isNaN(numberPressed)) {
+        e.preventDefault();
+        const website = websites[numberPressed - 1];
+        if (website) window.open(website.url, e.altKey ? "_blank" : "_self");
+      }
+    });
+  }
+  addKeyboardShortcuts();
 }
 
 websitesInit();
